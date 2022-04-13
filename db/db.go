@@ -9,6 +9,7 @@ import (
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/joho/godotenv"
 	"github.com/nikitamirzani323/wl_api_master/helpers"
 )
 
@@ -16,6 +17,10 @@ var db *sql.DB
 var err error
 
 func Init() {
+	err := godotenv.Load()
+	if err != nil {
+		panic("Failed to load env file")
+	}
 	var conString string = ""
 
 	dbDriver := os.Getenv("DB_DRIVER")

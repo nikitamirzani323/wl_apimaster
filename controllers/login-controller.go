@@ -3,7 +3,9 @@ package controllers
 import (
 	"log"
 	"strconv"
+	"time"
 
+	"github.com/buger/jsonparser"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
@@ -12,7 +14,10 @@ import (
 	"github.com/nikitamirzani323/wl_api_master/models"
 )
 
+const Field_login_redis = "LISTLOGINADMIN_MASTER_WL"
+
 func CheckLogin(c *fiber.Ctx) error {
+	render_page := time.Now()
 	var errors []*helpers.ErrorResponse
 	client := new(entities.Login)
 	validate := validator.New()
@@ -39,40 +44,84 @@ func CheckLogin(c *fiber.Ctx) error {
 			"record":  errors,
 		})
 	}
+	flag_login := false
+	ruleadmin := ""
+	resultredis, flag := helpers.GetRedis(Field_login_redis)
+	jsonredis := []byte(resultredis)
+	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
+	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+		login_username, _ := jsonparser.GetString(value, "login_username")
+		login_password, _ := jsonparser.GetString(value, "login_password")
+		login_idadmin, _ := jsonparser.GetString(value, "login_idadmin")
 
-	result, ruleadmin, err := models.Login_Model(client.Username, client.Password, client.Ipaddress, client.Timezone)
-
-	if err != nil {
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"status":  fiber.StatusBadRequest,
-			"message": err.Error(),
-			"record":  nil,
-		})
-	}
-
-	if !result {
-		return c.Status(fiber.StatusUnauthorized).JSON(
-			fiber.Map{
+		if login_username == client.Username {
+			hashpass := helpers.HashPasswordMD5(client.Password)
+			log.Println("Password : " + hashpass)
+			log.Println("Hash : " + login_password)
+			if hashpass == login_password {
+				flag_login = true
+				ruleadmin = login_idadmin
+			}
+		}
+	})
+	if !flag {
+		result, flag, ruleadmin, err := models.Login_Model2(client.Username, client.Password)
+		if err != nil {
+			c.Status(fiber.StatusBadRequest)
+			return c.JSON(fiber.Map{
 				"status":  fiber.StatusBadRequest,
-				"message": "Username or Password Not Found",
+				"message": err.Error(),
+				"record":  nil,
 			})
+		}
+		if flag {
+			helpers.SetRedis(Field_login_redis, result, 30*time.Hour)
+			log.Println("LIST LOGIN ADMIN MASTER MYSQL")
+
+			models.Update_login(client.Username, client.Ipaddress, client.Timezone)
+
+			dataclient := client.Username + "==" + ruleadmin
+			dataclient_encr, keymap := helpers.Encryption(dataclient)
+			dataclient_encr_final := dataclient_encr + "|" + strconv.Itoa(keymap)
+			t, err := helpers.GenerateNewAccessToken(dataclient_encr_final)
+			if err != nil {
+				return c.SendStatus(fiber.StatusInternalServerError)
+			}
+
+			return c.JSON(fiber.Map{
+				"status": fiber.StatusOK,
+				"token":  t,
+				"time":   time.Since(render_page).String(),
+			})
+		} else {
+			return c.JSON(fiber.Map{
+				"status": fiber.ErrBadRequest,
+				"token":  "",
+				"time":   time.Since(render_page).String(),
+			})
+		}
 
 	} else {
-		dataclient := client.Username + "==" + ruleadmin
-		dataclient_encr, keymap := helpers.Encryption(dataclient)
-		dataclient_encr_final := dataclient_encr + "|" + strconv.Itoa(keymap)
-		t, err := helpers.GenerateNewAccessToken(dataclient_encr_final)
-		if err != nil {
-			return c.SendStatus(fiber.StatusInternalServerError)
+		log.Println("LIST LOGIN ADMIN MASTER CACHE")
+		temp_token := ""
+		if flag_login {
+			dataclient := client.Username + "==" + ruleadmin
+			dataclient_encr, keymap := helpers.Encryption(dataclient)
+			dataclient_encr_final := dataclient_encr + "|" + strconv.Itoa(keymap)
+			t, err := helpers.GenerateNewAccessToken(dataclient_encr_final)
+			if err != nil {
+				return c.SendStatus(fiber.StatusInternalServerError)
+			}
+			temp_token = t
 		}
 
 		return c.JSON(fiber.Map{
 			"status": fiber.StatusOK,
-			"token":  t,
+			"token":  temp_token,
+			"time":   time.Since(render_page).String(),
 		})
-
 	}
+
 }
 func Home(c *fiber.Ctx) error {
 	var errors []*helpers.ErrorResponse
