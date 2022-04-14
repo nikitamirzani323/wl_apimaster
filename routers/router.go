@@ -24,6 +24,7 @@ func Init() *fiber.App {
 
 	app.Get("/dashboard", monitor.New())
 	app.Post("/api/login", controllers.CheckLogin)
+	app.Post("/api/generator", controllers.GeneratorPassword)
 	api := app.Group("/api/", middleware.JWTProtected())
 
 	api.Post("valid", controllers.Home)

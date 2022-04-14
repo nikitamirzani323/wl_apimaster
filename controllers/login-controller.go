@@ -56,8 +56,6 @@ func CheckLogin(c *fiber.Ctx) error {
 
 		if login_username == client.Username {
 			hashpass := helpers.HashPasswordMD5(client.Password)
-			log.Println("Password : " + hashpass)
-			log.Println("Hash : " + login_password)
 			if hashpass == login_password {
 				flag_login = true
 				ruleadmin = login_idadmin
@@ -65,7 +63,7 @@ func CheckLogin(c *fiber.Ctx) error {
 		}
 	})
 	if !flag {
-		result, flag, ruleadmin, err := models.Login_Model2(client.Username, client.Password)
+		result, flag_model, rule_model, err := models.Login_Model(client.Username, client.Password)
 		if err != nil {
 			c.Status(fiber.StatusBadRequest)
 			return c.JSON(fiber.Map{
@@ -74,25 +72,13 @@ func CheckLogin(c *fiber.Ctx) error {
 				"record":  nil,
 			})
 		}
-		if flag {
+		if flag_model {
+			flag_login = true
+			ruleadmin = rule_model
 			helpers.SetRedis(Field_login_redis, result, 30*time.Hour)
 			log.Println("LIST LOGIN ADMIN MASTER MYSQL")
 
 			models.Update_login(client.Username, client.Ipaddress, client.Timezone)
-
-			dataclient := client.Username + "==" + ruleadmin
-			dataclient_encr, keymap := helpers.Encryption(dataclient)
-			dataclient_encr_final := dataclient_encr + "|" + strconv.Itoa(keymap)
-			t, err := helpers.GenerateNewAccessToken(dataclient_encr_final)
-			if err != nil {
-				return c.SendStatus(fiber.StatusInternalServerError)
-			}
-
-			return c.JSON(fiber.Map{
-				"status": fiber.StatusOK,
-				"token":  t,
-				"time":   time.Since(render_page).String(),
-			})
 		} else {
 			return c.JSON(fiber.Map{
 				"status": fiber.ErrBadRequest,
@@ -103,25 +89,25 @@ func CheckLogin(c *fiber.Ctx) error {
 
 	} else {
 		log.Println("LIST LOGIN ADMIN MASTER CACHE")
-		temp_token := ""
-		if flag_login {
-			dataclient := client.Username + "==" + ruleadmin
-			dataclient_encr, keymap := helpers.Encryption(dataclient)
-			dataclient_encr_final := dataclient_encr + "|" + strconv.Itoa(keymap)
-			t, err := helpers.GenerateNewAccessToken(dataclient_encr_final)
-			if err != nil {
-				return c.SendStatus(fiber.StatusInternalServerError)
-			}
-			temp_token = t
-		}
 
-		return c.JSON(fiber.Map{
-			"status": fiber.StatusOK,
-			"token":  temp_token,
-			"time":   time.Since(render_page).String(),
-		})
+	}
+	temp_token := ""
+	if flag_login {
+		dataclient := client.Username + "==" + ruleadmin
+		dataclient_encr, keymap := helpers.Encryption(dataclient)
+		dataclient_encr_final := dataclient_encr + "|" + strconv.Itoa(keymap)
+		t, err := helpers.GenerateNewAccessToken(dataclient_encr_final)
+		if err != nil {
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+		temp_token = t
 	}
 
+	return c.JSON(fiber.Map{
+		"status": fiber.StatusOK,
+		"token":  temp_token,
+		"time":   time.Since(render_page).String(),
+	})
 }
 func Home(c *fiber.Ctx) error {
 	var errors []*helpers.ErrorResponse
@@ -177,4 +163,16 @@ func Home(c *fiber.Ctx) error {
 			"record":  nil,
 		})
 	}
+}
+func GeneratorPassword(c *fiber.Ctx) error {
+	render_page := time.Now()
+	client := new(entities.Login)
+
+	pwd := helpers.HashPasswordMD5(client.Password)
+
+	return c.JSON(fiber.Map{
+		"status":   fiber.StatusOK,
+		"password": pwd,
+		"time":     time.Since(render_page).String(),
+	})
 }
