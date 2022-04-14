@@ -114,11 +114,7 @@ func Save_companyHome(
 	tglnow, _ := goment.New()
 	render_page := time.Now()
 	flag := false
-	if status == "ACTIVE" {
-		status = "Y"
-	} else {
-		status = "N"
-	}
+
 	if sData == "New" {
 		flag = CheckDB(configs.DB_tbl_mst_company, "idcompany", idcompany)
 		if !flag {
