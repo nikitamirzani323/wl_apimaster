@@ -29,7 +29,7 @@ type Controller_companysave struct {
 	Company_nmcompany   string `json:"company_nmcompany" validate:"required"`
 	Company_nmowner     string `json:"company_nmowner" validate:"required"`
 	Company_phoneowner  string `json:"company_phoneowner" validate:"required"`
-	Company_emailowner  string `json:"company_emailowner" validate:"required"`
+	Company_emailowner  string `json:"company_emailowner" `
 	Company_urlendpoint string `json:"company_urlendpoint" validate:"required"`
 	Company_status      string `json:"company_status" validate:"required"`
 }
