@@ -13,7 +13,7 @@ import (
 	"github.com/nikitamirzani323/wl_api_master/models"
 )
 
-const Fieldadmin_home_redis = "LISTADMIN_BACKEND_WL"
+const Fieldadmin_home_redis = "LISTADMIN_MASTER_WL"
 
 func Adminhome(c *fiber.Ctx) error {
 	var errors []*helpers.ErrorResponse
@@ -106,7 +106,6 @@ func Adminhome(c *fiber.Ctx) error {
 		})
 	}
 }
-
 func AdminSave(c *fiber.Ctx) error {
 	var errors []*helpers.ErrorResponse
 	client := new(entities.Controller_adminsave)
@@ -154,7 +153,10 @@ func AdminSave(c *fiber.Ctx) error {
 		})
 	}
 
-	val_master := helpers.DeleteRedis(Fieldadmin_home_redis)
-	log.Printf("Redis Delete BACKEND ADMIN : %d", val_master)
+	_deleteredis_admin()
 	return c.JSON(result)
+}
+func _deleteredis_admin() {
+	val_master := helpers.DeleteRedis(Fieldadmin_home_redis)
+	log.Printf("REDIS DELETE MASTER ADMIN : %d", val_master)
 }

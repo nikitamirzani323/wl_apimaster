@@ -13,7 +13,7 @@ import (
 	"github.com/nikitamirzani323/wl_api_master/models"
 )
 
-const Fieldadminrule_home_redis = "LISTADMINRULE_BACKEND_WL"
+const Fieldadminrule_home_redis = "LISTADMINRULE_MASTER_WL"
 
 func Adminrulehome(c *fiber.Ctx) error {
 	var errors []*helpers.ErrorResponse
@@ -125,7 +125,10 @@ func AdminruleSave(c *fiber.Ctx) error {
 		})
 	}
 
-	val_master := helpers.DeleteRedis(Fieldadminrule_home_redis)
-	log.Printf("Redis Delete BACKEND ADMIN RULE : %d", val_master)
+	_deleteredis_adminrule()
 	return c.JSON(result)
+}
+func _deleteredis_adminrule() {
+	val_master := helpers.DeleteRedis(Fieldadminrule_home_redis)
+	log.Printf("REDIS DELETE MASTER ADMIN RULE : %d", val_master)
 }
