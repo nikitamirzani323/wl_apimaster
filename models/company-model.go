@@ -13,10 +13,10 @@ import (
 	"github.com/nleeper/goment"
 )
 
-func Fetch_companyHome() (helpers.Response, error) {
+func Fetch_companyHome() (helpers.ResponseCompany, error) {
 	var obj entities.Model_company
 	var arraobj []entities.Model_company
-	var res helpers.Response
+	var res helpers.ResponseCompany
 	msg := "Data Not Found"
 	con := db.CreateCon()
 	ctx := context.Background()
@@ -75,9 +75,32 @@ func Fetch_companyHome() (helpers.Response, error) {
 	}
 	defer row.Close()
 
+	var objCurr entities.Model_compcurr
+	var arraobjCurr []entities.Model_compcurr
+	sql_listcurr := `SELECT 
+		idcurr 	
+		FROM ` + configs.DB_tbl_mst_currency + ` 
+	`
+	row_listcurr, err_listcurr := con.QueryContext(ctx, sql_listcurr)
+	helpers.ErrorCheck(err_listcurr)
+	for row_listcurr.Next() {
+		var (
+			idcurr_db string
+		)
+
+		err = row_listcurr.Scan(&idcurr_db)
+
+		helpers.ErrorCheck(err)
+
+		objCurr.Curr_idcurr = idcurr_db
+		arraobjCurr = append(arraobjCurr, objCurr)
+		msg = "Success"
+	}
+
 	res.Status = fiber.StatusOK
 	res.Message = msg
 	res.Record = arraobj
+	res.Listcurr = arraobjCurr
 	res.Time = time.Since(start).String()
 
 	return res, nil

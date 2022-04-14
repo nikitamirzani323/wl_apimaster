@@ -45,10 +45,13 @@ func Companyhome(c *fiber.Ctx) error {
 
 	var obj entities.Model_company
 	var arraobj []entities.Model_company
+	var obj_listcurr entities.Model_compcurr
+	var arraobj_listcurr []entities.Model_compcurr
 	render_page := time.Now()
-	resultredis, flag := helpers.GetRedis(Fieldadmin_home_redis)
+	resultredis, flag := helpers.GetRedis(Fieldcompany_home_redis)
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
+	listcurr_RD, _, _, _ := jsonparser.Get(jsonredis, "listcurr")
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 		company_idcompany, _ := jsonparser.GetString(value, "company_idcompany")
 		company_startjoin, _ := jsonparser.GetString(value, "company_startjoin")
@@ -57,6 +60,7 @@ func Companyhome(c *fiber.Ctx) error {
 		company_nmcompany, _ := jsonparser.GetString(value, "company_nmcompany")
 		company_nmowner, _ := jsonparser.GetString(value, "company_nmowner")
 		company_phoneowner, _ := jsonparser.GetString(value, "company_phoneowner")
+		company_emailowner, _ := jsonparser.GetString(value, "company_emailowner")
 		company_urlendpoint, _ := jsonparser.GetString(value, "company_urlendpoint")
 		company_status, _ := jsonparser.GetString(value, "company_status")
 		company_create, _ := jsonparser.GetString(value, "company_create")
@@ -69,11 +73,18 @@ func Companyhome(c *fiber.Ctx) error {
 		obj.Company_nmcompany = company_nmcompany
 		obj.Company_nmowner = company_nmowner
 		obj.Company_phoneowner = company_phoneowner
+		obj.Company_emailowner = company_emailowner
 		obj.Company_urlendpoint = company_urlendpoint
 		obj.Company_status = company_status
 		obj.Company_create = company_create
 		obj.Company_update = company_update
 		arraobj = append(arraobj, obj)
+	})
+	jsonparser.ArrayEach(listcurr_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+		curr_idcurr, _ := jsonparser.GetString(value, "curr_idcurr")
+
+		obj_listcurr.Curr_idcurr = curr_idcurr
+		arraobj_listcurr = append(arraobj_listcurr, obj_listcurr)
 	})
 	if !flag {
 		result, err := models.Fetch_companyHome()
@@ -91,10 +102,11 @@ func Companyhome(c *fiber.Ctx) error {
 	} else {
 		log.Println("COMPANY CACHE")
 		return c.JSON(fiber.Map{
-			"status":  fiber.StatusOK,
-			"message": "Success",
-			"record":  arraobj,
-			"time":    time.Since(render_page).String(),
+			"status":       fiber.StatusOK,
+			"message":      "Success",
+			"record":       arraobj,
+			"listcurrency": arraobj_listcurr,
+			"time":         time.Since(render_page).String(),
 		})
 	}
 }

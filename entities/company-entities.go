@@ -14,7 +14,9 @@ type Model_company struct {
 	Company_create      string `json:"company_create"`
 	Company_update      string `json:"company_update"`
 }
-
+type Model_compcurr struct {
+	Curr_idcurr string `json:"curr_idcurr"`
+}
 type Controller_company struct {
 	Master string `json:"master" validate:"required"`
 }
