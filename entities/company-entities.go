@@ -14,13 +14,27 @@ type Model_company struct {
 	Company_create      string `json:"company_create"`
 	Company_update      string `json:"company_update"`
 }
+type Model_companyadmin struct {
+	Companyadmin_username      string `json:"companyadmin_username"`
+	Companyadmin_type          string `json:"companyadmin_type"`
+	Companyadmin_name          string `json:"companyadmin_name"`
+	Companyadmin_email         string `json:"companyadmin_email"`
+	Companyadmin_phone         string `json:"companyadmin_phone"`
+	Companyadmin_status        string `json:"companyadmin_status"`
+	Companyadmin_lastlogin     string `json:"companyadmin_lastlogin"`
+	Companyadmin_lastipaddress string `json:"companyadmin_lastipaddress"`
+	Companyadmin_create        string `json:"companyadmin_create"`
+	Companyadmin_update        string `json:"companyadmin_update"`
+}
 type Model_compcurr struct {
 	Curr_idcurr string `json:"curr_idcurr"`
 }
 type Controller_company struct {
 	Master string `json:"master" validate:"required"`
 }
-
+type Controller_companyadmin struct {
+	Idcompany string `json:"idcompany" validate:"required"`
+}
 type Controller_companysave struct {
 	Sdata               string `json:"sdata" validate:"required"`
 	Page                string `json:"page" validate:"required"`

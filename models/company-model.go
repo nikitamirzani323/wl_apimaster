@@ -173,3 +173,68 @@ func Save_companyHome(
 
 	return res, nil
 }
+func Fetch_companyListAdmin(idcompany string) (helpers.Response, error) {
+	var obj entities.Model_companyadmin
+	var arraobj []entities.Model_companyadmin
+	var res helpers.Response
+	msg := "Data Not Found"
+	con := db.CreateCon()
+	ctx := context.Background()
+	start := time.Now()
+
+	sql_select := `SELECT 
+			username_comp , typeadmin, nama_comp, email_comp, phone_comp, 
+			status_comp , to_char(COALESCE(lastlogin_comp,now()), 'YYYY-MM-DD HH24:MI:SS'), lastipaddres_comp, 
+			createcomp_admin, to_char(COALESCE(createdatecomp_admin,now()), 'YYYY-MM-DD HH24:MI:SS') as createdatecomp_admin, 
+			updatecomp_admin, to_char(COALESCE(updatedatecomp_admin,now()), 'YYYY-MM-DD HH24:MI:SS') as updatedatecomp_admin 
+			FROM ` + configs.DB_tbl_mst_company_admin + ` 
+			WHERE idcompany = $1 
+			ORDER BY lastlogin_comp DESC 
+		`
+
+	row, err := con.QueryContext(ctx, sql_select, idcompany)
+
+	helpers.ErrorCheck(err)
+	for row.Next() {
+		var (
+			username_comp_db, typeadmin_db, nama_comp_db, email_comp_db, phone_comp_db                 string
+			status_comp_db, lastlogin_comp_db, lastipaddres_comp_db                                    string
+			createcomp_admin_db, createdatecomp_admin_db, updatecomp_admin_db, updatedatecomp_admin_db string
+		)
+
+		err = row.Scan(
+			&username_comp_db, &typeadmin_db, &nama_comp_db, &email_comp_db, &phone_comp_db,
+			&status_comp_db, &lastlogin_comp_db, &lastipaddres_comp_db,
+			&createcomp_admin_db, &createdatecomp_admin_db, &updatecomp_admin_db, &updatedatecomp_admin_db)
+
+		helpers.ErrorCheck(err)
+		if lastlogin_comp_db == "0000-00-00 00:00:00" {
+			lastlogin_comp_db = ""
+		}
+		create := createcomp_admin_db + ", " + createdatecomp_admin_db
+		update := ""
+		if updatecomp_admin_db != "" {
+			update = updatecomp_admin_db + ", " + updatedatecomp_admin_db
+		}
+		obj.Companyadmin_username = username_comp_db
+		obj.Companyadmin_type = typeadmin_db
+		obj.Companyadmin_name = nama_comp_db
+		obj.Companyadmin_email = email_comp_db
+		obj.Companyadmin_phone = phone_comp_db
+		obj.Companyadmin_status = status_comp_db
+		obj.Companyadmin_lastlogin = lastlogin_comp_db
+		obj.Companyadmin_lastipaddress = lastipaddres_comp_db
+		obj.Companyadmin_create = create
+		obj.Companyadmin_update = update
+		arraobj = append(arraobj, obj)
+		msg = "Success"
+	}
+	defer row.Close()
+
+	res.Status = fiber.StatusOK
+	res.Message = msg
+	res.Record = arraobj
+	res.Time = time.Since(start).String()
+
+	return res, nil
+}
