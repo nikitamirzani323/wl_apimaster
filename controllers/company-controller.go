@@ -232,10 +232,10 @@ func CompanyListadmin(c *fiber.Ctx) error {
 			})
 		}
 		helpers.SetRedis(Fieldcompany_home_redis+"_LISTADMIN_"+strings.ToLower(client.Idcompany), result, 30*time.Minute)
-		log.Println("COMPANY MYSQL")
+		log.Println("COMPANY LISTADMIN MYSQL")
 		return c.JSON(result)
 	} else {
-		log.Println("COMPANY CACHE")
+		log.Println("COMPANY LISTADMIN CACHE")
 		return c.JSON(fiber.Map{
 			"status":  fiber.StatusOK,
 			"message": "Success",
