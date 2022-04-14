@@ -17,6 +17,7 @@ import (
 const Field_login_redis = "LISTLOGINADMIN_MASTER_WL"
 
 func CheckLogin(c *fiber.Ctx) error {
+	msg := "Username and Password not register"
 	render_page := time.Now()
 	var errors []*helpers.ErrorResponse
 	client := new(entities.Login)
@@ -79,12 +80,6 @@ func CheckLogin(c *fiber.Ctx) error {
 			log.Println("LIST LOGIN ADMIN MASTER MYSQL")
 
 			models.Update_login(client.Username, client.Ipaddress, client.Timezone)
-		} else {
-			return c.JSON(fiber.Map{
-				"status": fiber.ErrBadRequest,
-				"token":  "",
-				"time":   time.Since(render_page).String(),
-			})
 		}
 
 	} else {
@@ -101,12 +96,14 @@ func CheckLogin(c *fiber.Ctx) error {
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}
 		temp_token = t
+		msg = ""
 	}
 
 	return c.JSON(fiber.Map{
-		"status": fiber.StatusOK,
-		"token":  temp_token,
-		"time":   time.Since(render_page).String(),
+		"status":  fiber.StatusOK,
+		"token":   temp_token,
+		"message": msg,
+		"time":    time.Since(render_page).String(),
 	})
 }
 func Home(c *fiber.Ctx) error {

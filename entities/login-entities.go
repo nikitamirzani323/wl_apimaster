@@ -6,10 +6,11 @@ type Model_login struct {
 	Login_idadmin  string `json:"login_idadmin"`
 }
 type Login struct {
-	Username  string `json:"username" validate:"required,min=4,max=30,lowercase"`
-	Password  string `json:"password" validate:"required"`
-	Ipaddress string `json:"ipaddress" validate:"required"`
-	Timezone  string `json:"timezone" validate:"required"`
+	Client_hostname string `json:"client_hostname" validate:"required"`
+	Username        string `json:"username" validate:"required,min=4,max=30,lowercase"`
+	Password        string `json:"password" validate:"required"`
+	Ipaddress       string `json:"ipaddress" validate:"required"`
+	Timezone        string `json:"timezone" validate:"required"`
 }
 type Home struct {
 	Page string `json:"page" validate:"required"`
