@@ -112,7 +112,11 @@ func Save_adminHome(admin, username, password, nama, rule, status, sData string)
 	tglnow, _ := goment.New()
 	render_page := time.Now()
 	flag := false
-
+	if status == "ACTIVE" {
+		status = "Y"
+	} else {
+		status = "N"
+	}
 	if sData == "New" {
 		flag = CheckDB(configs.DB_tbl_admin, "username", username)
 		if !flag {
