@@ -47,3 +47,15 @@ type Controller_companysave struct {
 	Company_urlendpoint string `json:"company_urlendpoint" validate:"required"`
 	Company_status      string `json:"company_status" validate:"required"`
 }
+
+type Controller_companysavelistadmin struct {
+	Sdata                  string `json:"sdata" validate:"required"`
+	Page                   string `json:"page" validate:"required"`
+	Companyadmin_idcompany string `json:"companyadmin_idcompany" validate:"required"`
+	Companyadmin_username  string `json:"companyadmin_username" validate:"required"`
+	Companyadmin_password  string `json:"companyadmin_password" validate:"required"`
+	Companyadmin_name      string `json:"companyadmin_name" validate:"required"`
+	Companyadmin_email     string `json:"companyadmin_email" `
+	Companyadmin_phone     string `json:"companyadmin_phone" validate:"required"`
+	Companyadmin_status    string `json:"companyadmin_status" validate:"required"`
+}
