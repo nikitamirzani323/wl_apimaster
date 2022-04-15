@@ -79,7 +79,6 @@ func CheckLogin(c *fiber.Ctx) error {
 			helpers.SetRedis(Field_login_redis, result, 30*time.Hour)
 			log.Println("LIST LOGIN ADMIN MASTER MYSQL")
 
-			models.Update_login(client.Username, client.Ipaddress, client.Timezone)
 		}
 
 	} else {
@@ -88,6 +87,9 @@ func CheckLogin(c *fiber.Ctx) error {
 	}
 	temp_token := ""
 	if flag_login {
+		_deletelogin_admin()
+		models.Update_login(client.Username, client.Ipaddress, client.Timezone)
+
 		dataclient := client.Username + "==" + ruleadmin
 		dataclient_encr, keymap := helpers.Encryption(dataclient)
 		dataclient_encr_final := dataclient_encr + "|" + strconv.Itoa(keymap)
@@ -172,4 +174,8 @@ func GeneratorPassword(c *fiber.Ctx) error {
 		"password": pwd,
 		"time":     time.Since(render_page).String(),
 	})
+}
+func _deletelogin_admin() {
+	val_master := helpers.DeleteRedis(Fieldadmin_home_redis)
+	log.Printf("REDIS DELETE MASTER ADMIN : %d", val_master)
 }
