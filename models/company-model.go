@@ -238,3 +238,71 @@ func Fetch_companyListAdmin(idcompany string) (helpers.Response, error) {
 
 	return res, nil
 }
+func Save_companylistadmin(
+	admin, idcompany, idcurr, nmcompany,
+	nmowner, phoneowner, emailowner, companyurl,
+	status, sData string) (helpers.Response, error) {
+	var res helpers.Response
+	msg := "Failed"
+	tglnow, _ := goment.New()
+	render_page := time.Now()
+	flag := false
+
+	if sData == "New" {
+		flag = CheckDB(configs.DB_tbl_mst_company, "idcompany", idcompany)
+		if !flag {
+			sql_insert := `
+				insert into
+				` + configs.DB_tbl_mst_company + ` (
+					idcompany , startjoincompany, idcurr, nmcompany, nmowner, 
+					phoneowner, emailowner, companyurl, statuscompany
+					createcompany, createdatecompany
+				) values (
+					$1, $2, $3, $4, $5,  
+					$6, $7, $8, $9, 
+					$10, $11 
+				)
+			`
+			flag_insert, msg_insert := Exec_SQL(sql_insert, configs.DB_tbl_mst_company, "INSERT",
+				idcompany, tglnow.Format("YYYY-MM-DD HH:mm:ss"), idcurr, nmcompany, nmowner, phoneowner, emailowner, companyurl, status,
+				admin, tglnow.Format("YYYY-MM-DD HH:mm:ss"))
+
+			if flag_insert {
+				flag = true
+				msg = "Succes"
+				log.Println(msg_insert)
+			} else {
+				log.Println(msg_insert)
+			}
+		} else {
+			msg = "Duplicate Entry"
+		}
+	} else {
+		sql_update2 := `
+				UPDATE 
+				` + configs.DB_tbl_mst_company + `   
+				SET nmcompany=$1, nmowner=$2, phoneowner=$3, emailowner=$4,  
+				companyurl =$5, statuscompany=$6,  
+				updatecompany=$7, updatedatecompany=$8 
+				WHERE idcompany =$9 
+			`
+		flag_update, msg_update := Exec_SQL(sql_update2, configs.DB_tbl_mst_company, "UPDATE",
+			nmcompany, nmowner, phoneowner, emailowner, companyurl, status,
+			admin, tglnow.Format("YYYY-MM-DD HH:mm:ss"), idcompany)
+
+		if flag_update {
+			flag = true
+			msg = "Succes"
+			log.Println(msg_update)
+		} else {
+			log.Println(msg_update)
+		}
+	}
+
+	res.Status = fiber.StatusOK
+	res.Message = msg
+	res.Record = nil
+	res.Time = time.Since(render_page).String()
+
+	return res, nil
+}
