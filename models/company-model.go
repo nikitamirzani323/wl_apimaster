@@ -254,17 +254,17 @@ func Save_companylistadmin(
 			sql_insert := `
 				insert into
 				` + configs.DB_tbl_mst_company_admin + ` (
-					username_comp , password_comp, idcompany, typeadmin, idruleadmin, lastlogin_comp,  
+					username_comp , password_comp, idcompany, typeadmin, idruleadmin,  
 					nama_comp, email_comp, phone_comp, status_comp,   
 					createcomp_admin, createdatecomp_admin 
 				) values (
-					$1, $2, $3, $4, $5, $6, 
-					$7, $8, $9, $10, 
-					$11, $12  
+					$1, $2, $3, $4, $5,  
+					$6, $7, $8, $9, 
+					$10, $11  
 				)
 			`
 			flag_insert, msg_insert := Exec_SQL(sql_insert, configs.DB_tbl_mst_company_admin, "INSERT",
-				username, password, idcompany, "MASTER", "0", "0000-00-00 00:00:00",
+				username, password, idcompany, "MASTER", "0",
 				name, email, phone, status, admin, tglnow.Format("YYYY-MM-DD HH:mm:ss"))
 
 			if flag_insert {
