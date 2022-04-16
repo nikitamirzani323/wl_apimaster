@@ -50,14 +50,14 @@ func CheckLogin(c *fiber.Ctx) error {
 	idcompany := ""
 	typeadmin := ""
 	ruleadmin := 0
-	resultredis, flag := helpers.GetRedis(Field_login_redis)
+	resultredis, flag := helpers.GetRedis(Field_login_redis + "_" + strings.ToLower(idcompany))
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 		login_username, _ := jsonparser.GetString(value, "login_username")
 		login_password, _ := jsonparser.GetString(value, "login_password")
 		login_typeadmin, _ := jsonparser.GetString(value, "login_typeadmin")
-		Login_idcompany, _ := jsonparser.GetString(value, "Login_idcompany")
+		Login_idcompany, _ := jsonparser.GetString(value, "login_idcompany")
 		login_idrule, _ := jsonparser.GetInt(value, "login_idrule")
 
 		if login_username == client.Username {
@@ -85,7 +85,7 @@ func CheckLogin(c *fiber.Ctx) error {
 			idcompany = idcompany_model
 			typeadmin = typeadmin_model
 			ruleadmin = rule_model
-			helpers.SetRedis(Field_login_redis, result, 30*time.Hour)
+			helpers.SetRedis(Field_login_redis+"_"+strings.ToLower(idcompany), result, 30*time.Hour)
 			log.Println("LIST LOGIN ADMIN SUPER MYSQL")
 
 		}
@@ -97,7 +97,7 @@ func CheckLogin(c *fiber.Ctx) error {
 	temp_token := ""
 	if flag_login {
 		_deletelogin_admin(idcompany)
-		models.Update_login(client.Username, client.Ipaddress, client.Timezone)
+		models.Update_login(client.Username, client.Ipaddress, client.Timezone, idcompany)
 
 		dataclient := client.Username + "==" + idcompany + "==" + typeadmin + "==" + strconv.Itoa(ruleadmin)
 		dataclient_encr, keymap := helpers.Encryption(dataclient)

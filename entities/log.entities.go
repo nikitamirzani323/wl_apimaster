@@ -10,6 +10,5 @@ type Model_log struct {
 }
 
 type Controller_log struct {
-	Master   string `json:"master" validate:"required"`
-	Typeuser string `json:"typeuser" validate:"required"`
+	Master string `json:"master" validate:"required"`
 }

@@ -80,19 +80,20 @@ func Login_Model(username, password string) (helpers.Response, bool, string, str
 
 	return res, flag, idcompany, typeadmin, ruleadmin, nil
 }
-func Update_login(username, ipaddress, timezone string) {
+func Update_login(username, ipaddress, timezone, idcompany string) {
 	tglnow, _ := goment.New()
 	sql_update := `
 			UPDATE ` + configs.DB_tbl_mst_Company_admin + ` 
 			SET lastlogin_comp=$1, lastipaddres_comp=$2 , lasttimezone_comp=$3, 
 			updatecomp_admin=$4,  updatedatecomp_admin=$5  
 			WHERE username_comp  = $6 
+			AND idcompany = $7  
 			AND status_comp = 'ACTIVE' 
 		`
 	lastlogin := tglnow.Format("YYYY-MM-DD HH:mm:ss")
 	flag_update, msg_update := Exec_SQL(sql_update, configs.DB_tbl_mst_Company_admin, "UPDATE",
 		lastlogin, ipaddress, timezone, username,
-		tglnow.Format("YYYY-MM-DD HH:mm:ss"), username)
+		tglnow.Format("YYYY-MM-DD HH:mm:ss"), username, idcompany)
 
 	if flag_update {
 		log.Println(msg_update)
