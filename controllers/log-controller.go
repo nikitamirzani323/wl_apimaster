@@ -7,9 +7,9 @@ import (
 	"github.com/buger/jsonparser"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"github.com/nikitamirzani323/wl_apisuper/entities"
-	"github.com/nikitamirzani323/wl_apisuper/helpers"
-	"github.com/nikitamirzani323/wl_apisuper/models"
+	"github.com/nikitamirzani323/wl_apimaster/entities"
+	"github.com/nikitamirzani323/wl_apimaster/helpers"
+	"github.com/nikitamirzani323/wl_apimaster/models"
 )
 
 const Fieldlog_home_redis = "LISTLOG_MASTER_WL"
