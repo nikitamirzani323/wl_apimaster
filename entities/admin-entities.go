@@ -7,6 +7,7 @@ type Model_admin struct {
 	Admin_nama          string `json:"admin_nama"`
 	Admin_phone         string `json:"admin_phone"`
 	Admin_email         string `json:"admin_email"`
+	Admin_joindate      string `json:"admin_joindate"`
 	Admin_lastlogin     string `json:"admin_lastlogin"`
 	Admin_lastIpaddress string `json:"admin_lastipaddres"`
 	Admin_status        string `json:"admin_status"`

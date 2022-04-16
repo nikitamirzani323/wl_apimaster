@@ -55,7 +55,7 @@ func Fetch_adminHome(idcompany string) (helpers.ResponseAdmin, error) {
 			&createcomp_admin_db, &createdatecomp_admin_db, &updatecomp_admin_db, &updatedatecomp_admin_db)
 
 		helpers.ErrorCheck(err)
-		nmrule := _adminrule(idruleadmin_db, "rulecomp", idcompany)
+		nmrule := _adminrule(idruleadmin_db, "nmcomprule", idcompany)
 		create := createcomp_admin_db + ", " + createdatecomp_admin_db
 		update := ""
 		if updatecomp_admin_db != "" {
@@ -67,6 +67,7 @@ func Fetch_adminHome(idcompany string) (helpers.ResponseAdmin, error) {
 		obj.Admin_nama = nama_comp_db
 		obj.Admin_phone = phone_comp_db
 		obj.Admin_email = email_comp_db
+		obj.Admin_joindate = createdatecomp_admin_db
 		obj.Admin_lastlogin = lastlogin_comp_db
 		obj.Admin_lastIpaddress = lastipaddres_comp_db
 		obj.Admin_status = status_comp_db
@@ -258,7 +259,7 @@ func _adminrule(idrule int, tipe, idcompany string) string {
 	}
 	if flag {
 		switch tipe {
-		case "rulecomp":
+		case "nmcomprule":
 			result = nmcomprule
 		}
 	}

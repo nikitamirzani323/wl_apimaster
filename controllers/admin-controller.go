@@ -65,6 +65,7 @@ func Adminhome(c *fiber.Ctx) error {
 		admin_nama, _ := jsonparser.GetString(value, "admin_nama")
 		admin_phone, _ := jsonparser.GetString(value, "admin_phone")
 		admin_email, _ := jsonparser.GetString(value, "admin_email")
+		admin_joindate, _ := jsonparser.GetString(value, "admin_joindate")
 		admin_lastlogin, _ := jsonparser.GetString(value, "admin_lastlogin")
 		admin_lastipaddres, _ := jsonparser.GetString(value, "admin_lastipaddres")
 		admin_status, _ := jsonparser.GetString(value, "admin_status")
@@ -77,6 +78,7 @@ func Adminhome(c *fiber.Ctx) error {
 		obj.Admin_nama = admin_nama
 		obj.Admin_phone = admin_phone
 		obj.Admin_email = admin_email
+		obj.Admin_joindate = admin_joindate
 		obj.Admin_lastlogin = admin_lastlogin
 		obj.Admin_lastIpaddress = admin_lastipaddres
 		obj.Admin_status = admin_status
