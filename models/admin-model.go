@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"log"
 	"strconv"
 	"time"
@@ -54,7 +55,7 @@ func Fetch_adminHome(idcompany string) (helpers.ResponseAdmin, error) {
 			&createcomp_admin_db, &createdatecomp_admin_db, &updatecomp_admin_db, &updatedatecomp_admin_db)
 
 		helpers.ErrorCheck(err)
-
+		nmrule := _adminrule(idruleadmin_db, "rulecomp", idcompany)
 		create := createcomp_admin_db + ", " + createdatecomp_admin_db
 		update := ""
 		if updatecomp_admin_db != "" {
@@ -62,7 +63,7 @@ func Fetch_adminHome(idcompany string) (helpers.ResponseAdmin, error) {
 		}
 		obj.Admin_username = username_comp_db
 		obj.Admin_type = typeadmin_db
-		obj.Admin_rule = idruleadmin_db
+		obj.Admin_rule = nmrule
 		obj.Admin_nama = nama_comp_db
 		obj.Admin_phone = phone_comp_db
 		obj.Admin_email = email_comp_db
@@ -231,4 +232,35 @@ func Save_adminHome(admin, idcompany, username, password, nama, email, phone, st
 	res.Time = time.Since(render_page).String()
 
 	return res, nil
+}
+func _adminrule(idrule int, tipe, idcompany string) string {
+	con := db.CreateCon()
+	ctx := context.Background()
+	flag := false
+	result := ""
+	nmcomprule := ""
+
+	sql_select := `SELECT
+		nmcomprule  
+		FROM ` + configs.DB_tbl_mst_Company_adminrule + `  
+		WHERE idcomprule = $1 
+		AND idcompany = $2 
+	`
+	row := con.QueryRowContext(ctx, sql_select, idrule, idcompany)
+	switch e := row.Scan(&nmcomprule); e {
+	case sql.ErrNoRows:
+		flag = false
+	case nil:
+		flag = true
+
+	default:
+		panic(e)
+	}
+	if flag {
+		switch tipe {
+		case "rulecomp":
+			result = nmcomprule
+		}
+	}
+	return result
 }

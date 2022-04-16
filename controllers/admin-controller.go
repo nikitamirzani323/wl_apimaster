@@ -61,7 +61,7 @@ func Adminhome(c *fiber.Ctx) error {
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 		admin_username, _ := jsonparser.GetString(value, "admin_username")
 		admin_type, _ := jsonparser.GetString(value, "admin_type")
-		admin_rule, _ := jsonparser.GetInt(value, "admin_rule")
+		admin_rule, _ := jsonparser.GetString(value, "admin_rule")
 		admin_nama, _ := jsonparser.GetString(value, "admin_nama")
 		admin_phone, _ := jsonparser.GetString(value, "admin_phone")
 		admin_email, _ := jsonparser.GetString(value, "admin_email")
@@ -73,7 +73,7 @@ func Adminhome(c *fiber.Ctx) error {
 
 		obj.Admin_username = admin_username
 		obj.Admin_type = admin_type
-		obj.Admin_rule = int(admin_rule)
+		obj.Admin_rule = admin_rule
 		obj.Admin_nama = admin_nama
 		obj.Admin_phone = admin_phone
 		obj.Admin_email = admin_email

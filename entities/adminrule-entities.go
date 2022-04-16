@@ -15,9 +15,9 @@ type Controller_adminrule struct {
 type Controller_adminrulesave struct {
 	Sdata  string `json:"sdata" validate:"required"`
 	Page   string `json:"page" validate:"required"`
-	Idrule int    `json:"adminrule_idrule" validate:"required"`
+	Idrule int    `json:"adminrule_idrule" "`
 	Nmrule string `json:"adminrule_nmrule" validate:"required"`
-	Rule   string `json:"adminrule_rule" validate:"required"`
+	Rule   string `json:"adminrule_rule" `
 }
 
 type Responseredis_adminruleall struct {

@@ -3,7 +3,7 @@ package entities
 type Model_admin struct {
 	Admin_username      string `json:"admin_username"`
 	Admin_type          string `json:"admin_type"`
-	Admin_rule          int    `json:"admin_rule"`
+	Admin_rule          string `json:"admin_rule"`
 	Admin_nama          string `json:"admin_nama"`
 	Admin_phone         string `json:"admin_phone"`
 	Admin_email         string `json:"admin_email"`
