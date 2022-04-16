@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/nikitamirzani323/wl_apisuper/configs"
-	"github.com/nikitamirzani323/wl_apisuper/db"
-	"github.com/nikitamirzani323/wl_apisuper/helpers"
+	"github.com/nikitamirzani323/wl_apimaster/configs"
+	"github.com/nikitamirzani323/wl_apimaster/db"
+	"github.com/nikitamirzani323/wl_apimaster/helpers"
 	"github.com/nleeper/goment"
 )
 

@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/nikitamirzani323/wl_apisuper/configs"
-	"github.com/nikitamirzani323/wl_apisuper/db"
-	"github.com/nikitamirzani323/wl_apisuper/entities"
-	"github.com/nikitamirzani323/wl_apisuper/helpers"
+	"github.com/nikitamirzani323/wl_apimaster/configs"
+	"github.com/nikitamirzani323/wl_apimaster/db"
+	"github.com/nikitamirzani323/wl_apimaster/entities"
+	"github.com/nikitamirzani323/wl_apimaster/helpers"
 	"github.com/nleeper/goment"
 )
 
@@ -96,7 +96,7 @@ func Save_currHome(admin, idcurr, nama, sData string) (helpers.Response, error) 
 				notelog := ""
 				notelog += "NEW CURRENCY <br>"
 				notelog += "CURRENCRY : " + idcurr
-				Insert_log("SUPERADMIN", "", admin, "CURRENCY", "INSERT", notelog)
+				Insert_log("MASTER", "", admin, "CURRENCY", "INSERT", notelog)
 			} else {
 				log.Println(msg_insert)
 			}

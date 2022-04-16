@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/nikitamirzani323/wl_apisuper/configs"
-	"github.com/nikitamirzani323/wl_apisuper/db"
-	"github.com/nikitamirzani323/wl_apisuper/entities"
-	"github.com/nikitamirzani323/wl_apisuper/helpers"
+	"github.com/nikitamirzani323/wl_apimaster/configs"
+	"github.com/nikitamirzani323/wl_apimaster/db"
+	"github.com/nikitamirzani323/wl_apimaster/entities"
+	"github.com/nikitamirzani323/wl_apimaster/helpers"
 )
 
 func Fetch_adminruleHome() (helpers.Response, error) {
@@ -79,7 +79,7 @@ func Save_adminrule(admin, idadmin, rule, sData string) (helpers.Response, error
 				notelog := ""
 				notelog += "NEW RULE <br>"
 				notelog += "RULE : " + idadmin
-				Insert_log("SUPERADMIN", "", admin, "ADMIN RULE", "INSERT", notelog)
+				Insert_log("MASTER", "", admin, "ADMIN RULE", "INSERT", notelog)
 			} else {
 				log.Println(msg_insert)
 			}
@@ -104,7 +104,7 @@ func Save_adminrule(admin, idadmin, rule, sData string) (helpers.Response, error
 			notelog := ""
 			notelog += "UPDATE RULE <br>"
 			notelog += "RULE : " + idadmin
-			Insert_log("SUPERADMIN", "", admin, "ADMIN RULE", "UPDATE", notelog)
+			Insert_log("MASTER", "", admin, "ADMIN RULE", "UPDATE", notelog)
 		} else {
 			log.Println(msg_update)
 		}

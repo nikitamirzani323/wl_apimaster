@@ -12,7 +12,7 @@ import (
 	"github.com/nikitamirzani323/wl_apisuper/models"
 )
 
-const Fieldlog_home_redis = "LISTLOG_SUPER_WL"
+const Fieldlog_home_redis = "LISTLOG_MASTER_WL"
 
 func Loghome(c *fiber.Ctx) error {
 	var errors []*helpers.ErrorResponse

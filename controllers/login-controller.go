@@ -14,7 +14,7 @@ import (
 	"github.com/nikitamirzani323/wl_apisuper/models"
 )
 
-const Field_login_redis = "LISTLOGINADMIN_SUPER_WL"
+const Field_login_redis = "LISTLOGINMASTER_MASTER_WL"
 
 func CheckLogin(c *fiber.Ctx) error {
 	msg := "Username and Password not register"
@@ -166,8 +166,8 @@ func Home(c *fiber.Ctx) error {
 
 func _deletelogin_admin() {
 	val_super := helpers.DeleteRedis(Fieldadmin_home_redis)
-	log.Printf("REDIS DELETE SUPER ADMIN : %d", val_super)
+	log.Printf("REDIS DELETE MASTER ADMIN : %d", val_super)
 
 	val_superlog := helpers.DeleteRedis(Fieldlog_home_redis)
-	log.Printf("REDIS DELETE SUPER LOG : %d", val_superlog)
+	log.Printf("REDIS DELETE MASTER LOG : %d", val_superlog)
 }

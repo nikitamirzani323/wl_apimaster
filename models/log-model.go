@@ -5,10 +5,10 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/nikitamirzani323/wl_apisuper/configs"
-	"github.com/nikitamirzani323/wl_apisuper/db"
-	"github.com/nikitamirzani323/wl_apisuper/entities"
-	"github.com/nikitamirzani323/wl_apisuper/helpers"
+	"github.com/nikitamirzani323/wl_apimaster/configs"
+	"github.com/nikitamirzani323/wl_apimaster/db"
+	"github.com/nikitamirzani323/wl_apimaster/entities"
+	"github.com/nikitamirzani323/wl_apimaster/helpers"
 )
 
 func Fetch_logHome(typeuser string) (helpers.Response, error) {

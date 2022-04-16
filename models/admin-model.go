@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/nikitamirzani323/wl_apisuper/configs"
-	"github.com/nikitamirzani323/wl_apisuper/db"
-	"github.com/nikitamirzani323/wl_apisuper/entities"
-	"github.com/nikitamirzani323/wl_apisuper/helpers"
+	"github.com/nikitamirzani323/wl_apimaster/configs"
+	"github.com/nikitamirzani323/wl_apimaster/db"
+	"github.com/nikitamirzani323/wl_apimaster/entities"
+	"github.com/nikitamirzani323/wl_apimaster/helpers"
 	"github.com/nleeper/goment"
 )
 
@@ -149,7 +149,7 @@ func Save_adminHome(admin, username, password, nama, rule, status, sData string)
 				notelog += "RULE : " + rule + " <br>"
 				notelog += "NAME : " + nama + " <br>"
 				notelog += "STATUS : " + status
-				Insert_log("SUPERADMIN", "", admin, "ADMIN", "INSERT", notelog)
+				Insert_log("MASTER", "", admin, "ADMIN", "INSERT", notelog)
 			} else {
 				log.Println(msg_insert)
 			}
@@ -181,7 +181,7 @@ func Save_adminHome(admin, username, password, nama, rule, status, sData string)
 				notelog += "RULE : " + rule + " <br>"
 				notelog += "NAME : " + nama + " <br>"
 				notelog += "STATUS : " + status
-				Insert_log("SUPERADMIN", "", admin, "ADMIN", "UPDATE", notelog)
+				Insert_log("MASTER", "", admin, "ADMIN", "UPDATE", notelog)
 			} else {
 				log.Println(msg_update)
 			}
@@ -214,7 +214,7 @@ func Save_adminHome(admin, username, password, nama, rule, status, sData string)
 				notelog += "RULE : " + rule + " <br>"
 				notelog += "NAME : " + nama + " <br>"
 				notelog += "STATUS : " + status
-				Insert_log("SUPERADMIN", "", admin, "ADMIN", "UPDATE", notelog)
+				Insert_log("MASTER", "", admin, "ADMIN", "UPDATE", notelog)
 			} else {
 				log.Println(msg_update)
 			}

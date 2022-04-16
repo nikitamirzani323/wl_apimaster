@@ -7,10 +7,10 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/nikitamirzani323/wl_apisuper/configs"
-	"github.com/nikitamirzani323/wl_apisuper/db"
-	"github.com/nikitamirzani323/wl_apisuper/entities"
-	"github.com/nikitamirzani323/wl_apisuper/helpers"
+	"github.com/nikitamirzani323/wl_apimaster/configs"
+	"github.com/nikitamirzani323/wl_apimaster/db"
+	"github.com/nikitamirzani323/wl_apimaster/entities"
+	"github.com/nikitamirzani323/wl_apimaster/helpers"
 	"github.com/nleeper/goment"
 )
 
@@ -94,5 +94,5 @@ func Update_login(username, ipaddress, timezone string) {
 	notelog := ""
 	notelog += "DATE : " + lastlogin + " <br>"
 	notelog += "IP : " + ipaddress
-	Insert_log("SUPERADMIN", "", username, "LOGIN", "UPDATE", notelog)
+	Insert_log("MASTER", "", username, "LOGIN", "UPDATE", notelog)
 }

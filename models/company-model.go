@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/nikitamirzani323/wl_apisuper/configs"
-	"github.com/nikitamirzani323/wl_apisuper/db"
-	"github.com/nikitamirzani323/wl_apisuper/entities"
-	"github.com/nikitamirzani323/wl_apisuper/helpers"
+	"github.com/nikitamirzani323/wl_apimaster/configs"
+	"github.com/nikitamirzani323/wl_apimaster/db"
+	"github.com/nikitamirzani323/wl_apimaster/entities"
+	"github.com/nikitamirzani323/wl_apimaster/helpers"
 	"github.com/nleeper/goment"
 )
 
@@ -148,7 +148,7 @@ func Save_companyHome(
 				notelog += "PHONE : " + phoneowner + "<br>"
 				notelog += "EMAIL : " + emailowner + "<br>"
 				notelog += "STATUS : " + status
-				Insert_log("SUPERADMIN", "", admin, "COMPANY", "INSERT", notelog)
+				Insert_log("MASTER", "", admin, "COMPANY", "INSERT", notelog)
 			} else {
 				log.Println(msg_insert)
 			}
@@ -180,7 +180,7 @@ func Save_companyHome(
 			notelog += "PHONE : " + phoneowner + "<br>"
 			notelog += "EMAIL : " + emailowner + "<br>"
 			notelog += "STATUS : " + status
-			Insert_log("SUPERADMIN", "", admin, "COMPANY", "UPDATE", notelog)
+			Insert_log("MASTER", "", admin, "COMPANY", "UPDATE", notelog)
 		} else {
 			log.Println(msg_update)
 		}

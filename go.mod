@@ -1,4 +1,4 @@
-module github.com/nikitamirzani323/wl_apisuper
+module github.com/nikitamirzani323/wl_apimaster
 
 go 1.17
 

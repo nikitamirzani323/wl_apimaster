@@ -13,7 +13,7 @@ import (
 	"github.com/nikitamirzani323/wl_apisuper/models"
 )
 
-const Fieldadmin_home_redis = "LISTADMIN_SUPER_WL"
+const Fieldadmin_home_redis = "LISTADMIN_MASTER_WL"
 
 func Adminhome(c *fiber.Ctx) error {
 	var errors []*helpers.ErrorResponse
@@ -158,8 +158,8 @@ func AdminSave(c *fiber.Ctx) error {
 }
 func _deleteredis_admin() {
 	val_super := helpers.DeleteRedis(Fieldadmin_home_redis)
-	log.Printf("REDIS DELETE SUPER ADMIN : %d", val_super)
+	log.Printf("REDIS DELETE MASTER ADMIN : %d", val_super)
 
 	val_superlog := helpers.DeleteRedis(Fieldlog_home_redis)
-	log.Printf("REDIS DELETE SUPER LOG : %d", val_superlog)
+	log.Printf("REDIS DELETE MASTER LOG : %d", val_superlog)
 }

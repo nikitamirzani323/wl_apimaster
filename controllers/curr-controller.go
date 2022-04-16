@@ -13,7 +13,7 @@ import (
 	"github.com/nikitamirzani323/wl_apisuper/models"
 )
 
-const Fieldcurr_home_redis = "LISTCURR_SUPER_WL"
+const Fieldcurr_home_redis = "LISTCURR_MASTER_WL"
 
 func Currhome(c *fiber.Ctx) error {
 	var errors []*helpers.ErrorResponse
@@ -136,8 +136,8 @@ func CurrSave(c *fiber.Ctx) error {
 }
 func _deleteredis_curr() {
 	val_super := helpers.DeleteRedis(Fieldcurr_home_redis)
-	log.Printf("REDIS DELETE SUPER CURR : %d", val_super)
+	log.Printf("REDIS DELETE MASTER CURR : %d", val_super)
 
 	val_superlog := helpers.DeleteRedis(Fieldlog_home_redis)
-	log.Printf("REDIS DELETE SUPER LOG : %d", val_superlog)
+	log.Printf("REDIS DELETE MASTER LOG : %d", val_superlog)
 }

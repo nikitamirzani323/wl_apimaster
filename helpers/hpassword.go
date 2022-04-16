@@ -9,7 +9,7 @@ import (
 	s "strings"
 	"time"
 
-	"github.com/nikitamirzani323/wl_apisuper/configs"
+	"github.com/nikitamirzani323/wl_apimaster/configs"
 	"golang.org/x/crypto/bcrypt"
 )
 

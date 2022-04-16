@@ -14,7 +14,7 @@ import (
 	"github.com/nikitamirzani323/wl_apisuper/models"
 )
 
-const Fieldcompany_home_redis = "LISTCOMPANY_SUPER_WL"
+const Fieldcompany_home_redis = "LISTCOMPANY_MASTER_WL"
 
 func Companyhome(c *fiber.Ctx) error {
 	var errors []*helpers.ErrorResponse
@@ -297,14 +297,14 @@ func CompanySavelistadmin(c *fiber.Ctx) error {
 }
 func _deleteredis_company(idcompany string) {
 	val_super := helpers.DeleteRedis(Fieldcompany_home_redis)
-	log.Printf("REDIS DELETE SUPER COMPANY : %d", val_super)
+	log.Printf("REDIS DELETE MASTER COMPANY : %d", val_super)
 
 	val_superlog := helpers.DeleteRedis(Fieldlog_home_redis)
-	log.Printf("REDIS DELETE SUPER LOG : %d", val_superlog)
+	log.Printf("REDIS DELETE MASTER LOG : %d", val_superlog)
 
 	if idcompany != "" {
 		val_companyadmin := helpers.DeleteRedis(Fieldcompany_home_redis + "_LISTADMIN_" + strings.ToLower(idcompany))
-		log.Printf("REDIS DELETE SUPER COMPANY LISTADMIN : %d", val_companyadmin)
+		log.Printf("REDIS DELETE MASTER COMPANY LISTADMIN : %d", val_companyadmin)
 	}
 
 }
