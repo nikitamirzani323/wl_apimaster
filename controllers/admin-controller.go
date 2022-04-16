@@ -61,6 +61,7 @@ func Adminhome(c *fiber.Ctx) error {
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 		admin_username, _ := jsonparser.GetString(value, "admin_username")
 		admin_type, _ := jsonparser.GetString(value, "admin_type")
+		admin_idrule, _ := jsonparser.GetInt(value, "admin_idrule")
 		admin_rule, _ := jsonparser.GetString(value, "admin_rule")
 		admin_nama, _ := jsonparser.GetString(value, "admin_nama")
 		admin_phone, _ := jsonparser.GetString(value, "admin_phone")
@@ -74,6 +75,7 @@ func Adminhome(c *fiber.Ctx) error {
 
 		obj.Admin_username = admin_username
 		obj.Admin_type = admin_type
+		obj.Admin_idrule = int(admin_idrule)
 		obj.Admin_rule = admin_rule
 		obj.Admin_nama = admin_nama
 		obj.Admin_phone = admin_phone
@@ -87,10 +89,10 @@ func Adminhome(c *fiber.Ctx) error {
 		arraobj = append(arraobj, obj)
 	})
 	jsonparser.ArrayEach(listruleadmin_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
-		adminrule_idruleadmin, _ := jsonparser.GetInt(value, "adminrule_idruleadmin")
+		adminrule_idrule, _ := jsonparser.GetInt(value, "adminrule_idrule")
 		adminrule_nmrule, _ := jsonparser.GetString(value, "adminrule_nmrule")
 
-		obj_listruleadmin.Admin_idrule = int(adminrule_idruleadmin)
+		obj_listruleadmin.Admin_idrule = int(adminrule_idrule)
 		obj_listruleadmin.Admin_nmrule = adminrule_nmrule
 		arraobj_listruleadmin = append(arraobj_listruleadmin, obj_listruleadmin)
 	})

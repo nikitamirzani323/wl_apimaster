@@ -3,6 +3,7 @@ package entities
 type Model_admin struct {
 	Admin_username      string `json:"admin_username"`
 	Admin_type          string `json:"admin_type"`
+	Admin_idrule        int    `json:"admin_idrule"`
 	Admin_rule          string `json:"admin_rule"`
 	Admin_nama          string `json:"admin_nama"`
 	Admin_phone         string `json:"admin_phone"`
@@ -15,7 +16,7 @@ type Model_admin struct {
 	Admin_update        string `json:"admin_update"`
 }
 type Model_adminrule struct {
-	Admin_idrule int    `json:"adminrule_idruleadmin"`
+	Admin_idrule int    `json:"adminrule_idrule"`
 	Admin_nmrule string `json:"adminrule_nmrule"`
 }
 type Model_adminsave struct {
@@ -45,5 +46,5 @@ type Controller_adminsave struct {
 }
 
 type Responseredis_adminrule struct {
-	Adminrule_idrule string `json:"adminrule_idruleadmin"`
+	Adminrule_idrule string `json:"adminrule_idrule"`
 }

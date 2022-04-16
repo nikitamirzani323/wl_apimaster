@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"log"
-	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -59,10 +58,11 @@ func Fetch_adminHome(idcompany string) (helpers.ResponseAdmin, error) {
 		create := createcomp_admin_db + ", " + createdatecomp_admin_db
 		update := ""
 		if updatecomp_admin_db != "" {
-			update = updatecomp_admin_db + ", " + updatecomp_admin_db
+			update = updatecomp_admin_db + ", " + updatedatecomp_admin_db
 		}
 		obj.Admin_username = username_comp_db
 		obj.Admin_type = typeadmin_db
+		obj.Admin_idrule = idruleadmin_db
 		obj.Admin_rule = nmrule
 		obj.Admin_nama = nama_comp_db
 		obj.Admin_phone = phone_comp_db
@@ -142,11 +142,12 @@ func Save_adminHome(admin, idcompany, username, password, nama, email, phone, st
 				flag = true
 				msg = "Succes"
 				log.Println(msg_insert)
+				nmrule := _adminrule(idrule, "nmcomprule", idcompany)
 
 				notelog := ""
 				notelog += "NEW ADMIN <br>"
 				notelog += "USERNAME : " + username + " <br>"
-				notelog += "RULE : " + strconv.Itoa(idrule) + " <br>"
+				notelog += "RULE : " + nmrule + " <br>"
 				notelog += "TYPE : ADMIN <br>"
 				notelog += "NAME : " + nama + " <br>"
 				notelog += "PHONE : " + phone + " <br>"
@@ -178,17 +179,17 @@ func Save_adminHome(admin, idcompany, username, password, nama, email, phone, st
 				flag = true
 				msg = "Succes"
 				log.Println(msg_update)
-
+				nmrule := _adminrule(idrule, "nmcomprule", idcompany)
 				notelog := ""
 				notelog += "UPDATE ADMIN <br>"
 				notelog += "USERNAME : " + username + " <br>"
-				notelog += "RULE : " + strconv.Itoa(idrule) + " <br>"
+				notelog += "RULE : " + nmrule + " <br>"
 				notelog += "TYPE : ADMIN <br>"
 				notelog += "NAME : " + nama + " <br>"
 				notelog += "PHONE : " + phone + " <br>"
 				notelog += "EMAIL : " + email + " <br>"
 				notelog += "STATUS : " + status
-				Insert_log("MASTER", "", admin, "ADMIN", "UPDATE", notelog)
+				Insert_log("MASTER", idcompany, admin, "ADMIN", "UPDATE", notelog)
 			} else {
 				log.Println(msg_update)
 			}
@@ -210,17 +211,17 @@ func Save_adminHome(admin, idcompany, username, password, nama, email, phone, st
 				flag = true
 				msg = "Succes"
 				log.Println(msg_update)
-
+				nmrule := _adminrule(idrule, "nmcomprule", idcompany)
 				notelog := ""
 				notelog += "UPDATE ADMIN - CHANGE PASSWORD <br>"
 				notelog += "USERNAME : " + username + " <br>"
-				notelog += "RULE : " + strconv.Itoa(idrule) + " <br>"
+				notelog += "RULE : " + nmrule + " <br>"
 				notelog += "TYPE : ADMIN <br>"
 				notelog += "NAME : " + nama + " <br>"
 				notelog += "PHONE : " + phone + " <br>"
 				notelog += "EMAIL : " + email + " <br>"
 				notelog += "STATUS : " + status
-				Insert_log("MASTER", "", admin, "ADMIN", "UPDATE", notelog)
+				Insert_log("MASTER", idcompany, admin, "ADMIN", "UPDATE", notelog)
 			} else {
 				log.Println(msg_update)
 			}
