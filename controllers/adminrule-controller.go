@@ -43,11 +43,15 @@ func Adminrulehome(c *fiber.Ctx) error {
 			"record":  errors,
 		})
 	}
-
+	user := c.Locals("jwt").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	name := claims["name"].(string)
+	temp_decp := helpers.Decryption(name)
+	_, client_idcompany, _, _ := helpers.Parsing_Decry(temp_decp, "==")
 	var obj entities.Model_adminruleall
 	var arraobj []entities.Model_adminruleall
 	render_page := time.Now()
-	resultredis, flag := helpers.GetRedis(Fieldadminrule_home_redis + "_" + strings.ToLower(client.Idcompany))
+	resultredis, flag := helpers.GetRedis(Fieldadminrule_home_redis + "_" + strings.ToLower(client_idcompany))
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
@@ -66,7 +70,7 @@ func Adminrulehome(c *fiber.Ctx) error {
 	})
 
 	if !flag {
-		result, err := models.Fetch_adminruleHome(client.Idcompany)
+		result, err := models.Fetch_adminruleHome(client_idcompany)
 		if err != nil {
 			c.Status(fiber.StatusBadRequest)
 			return c.JSON(fiber.Map{
@@ -75,7 +79,7 @@ func Adminrulehome(c *fiber.Ctx) error {
 				"record":  nil,
 			})
 		}
-		helpers.SetRedis(Fieldadminrule_home_redis+"_"+strings.ToLower(client.Idcompany), result, 60*time.Minute)
+		helpers.SetRedis(Fieldadminrule_home_redis+"_"+strings.ToLower(client_idcompany), result, 60*time.Minute)
 		log.Println("ADMIN RULE MYSQL")
 		return c.JSON(result)
 	} else {
@@ -120,10 +124,10 @@ func AdminruleSave(c *fiber.Ctx) error {
 	claims := user.Claims.(jwt.MapClaims)
 	name := claims["name"].(string)
 	temp_decp := helpers.Decryption(name)
-	client_admin, _ := helpers.Parsing_Decry(temp_decp, "==")
+	client_admin, client_idcompany, _, _ := helpers.Parsing_Decry(temp_decp, "==")
 
 	//admin, idcompany, name, rule, sData string, idrule int
-	result, err := models.Save_adminrule(client_admin, client.Idcompany, client.Nmrule, client.Rule, client.Sdata, client.Idrule)
+	result, err := models.Save_adminrule(client_admin, client_idcompany, client.Nmrule, client.Rule, client.Sdata, client.Idrule)
 	if err != nil {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
@@ -133,7 +137,7 @@ func AdminruleSave(c *fiber.Ctx) error {
 		})
 	}
 
-	_deleteredis_adminrule(client.Idcompany)
+	_deleteredis_adminrule(client_idcompany)
 	return c.JSON(result)
 }
 func _deleteredis_adminrule(idcompany string) {

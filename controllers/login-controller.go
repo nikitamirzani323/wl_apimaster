@@ -3,6 +3,7 @@ package controllers
 import (
 	"log"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/buger/jsonparser"
@@ -46,6 +47,8 @@ func CheckLogin(c *fiber.Ctx) error {
 		})
 	}
 	flag_login := false
+	idcompany := ""
+	typeadmin := ""
 	ruleadmin := 0
 	resultredis, flag := helpers.GetRedis(Field_login_redis)
 	jsonredis := []byte(resultredis)
@@ -53,18 +56,22 @@ func CheckLogin(c *fiber.Ctx) error {
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 		login_username, _ := jsonparser.GetString(value, "login_username")
 		login_password, _ := jsonparser.GetString(value, "login_password")
-		login_idadmin, _ := jsonparser.GetInt(value, "login_idadmin")
+		login_typeadmin, _ := jsonparser.GetString(value, "login_typeadmin")
+		Login_idcompany, _ := jsonparser.GetString(value, "Login_idcompany")
+		login_idrule, _ := jsonparser.GetInt(value, "login_idrule")
 
 		if login_username == client.Username {
 			hashpass := helpers.HashPasswordMD5(client.Password)
 			if hashpass == login_password {
 				flag_login = true
-				ruleadmin = int(login_idadmin)
+				idcompany = Login_idcompany
+				typeadmin = login_typeadmin
+				ruleadmin = int(login_idrule)
 			}
 		}
 	})
 	if !flag {
-		result, flag_model, rule_model, err := models.Login_Model(client.Username, client.Password)
+		result, flag_model, idcompany_model, typeadmin_model, rule_model, err := models.Login_Model(client.Username, client.Password)
 		if err != nil {
 			c.Status(fiber.StatusBadRequest)
 			return c.JSON(fiber.Map{
@@ -75,6 +82,8 @@ func CheckLogin(c *fiber.Ctx) error {
 		}
 		if flag_model {
 			flag_login = true
+			idcompany = idcompany_model
+			typeadmin = typeadmin_model
 			ruleadmin = rule_model
 			helpers.SetRedis(Field_login_redis, result, 30*time.Hour)
 			log.Println("LIST LOGIN ADMIN SUPER MYSQL")
@@ -87,10 +96,10 @@ func CheckLogin(c *fiber.Ctx) error {
 	}
 	temp_token := ""
 	if flag_login {
-		_deletelogin_admin()
+		_deletelogin_admin(idcompany)
 		models.Update_login(client.Username, client.Ipaddress, client.Timezone)
 
-		dataclient := client.Username + "==" + strconv.Itoa(ruleadmin)
+		dataclient := client.Username + "==" + idcompany + "==" + typeadmin + "==" + strconv.Itoa(ruleadmin)
 		dataclient_encr, keymap := helpers.Encryption(dataclient)
 		dataclient_encr_final := dataclient_encr + "|" + strconv.Itoa(keymap)
 		t, err := helpers.GenerateNewAccessToken(dataclient_encr_final)
@@ -140,20 +149,31 @@ func Home(c *fiber.Ctx) error {
 	claims := user.Claims.(jwt.MapClaims)
 	name := claims["name"].(string)
 	temp_decp := helpers.Decryption(name)
-	client_username, idruleadmin := helpers.Parsing_Decry(temp_decp, "==")
+	client_username, client_idcompany, typeadmin, idruleadmin := helpers.Parsing_Decry(temp_decp, "==")
 	log.Printf("USERNAME : %s", client_username)
+	log.Printf("COMPANY : %s", client_idcompany)
+	log.Printf("TYPE : %s", typeadmin)
 	log.Printf("RULE : %s", idruleadmin)
 	log.Printf("PAGE : %s", client.Page)
-
-	ruleadmin := models.Get_AdminRule("ruleadmingroup", idruleadmin)
-	flag := models.Get_listitemsearch(ruleadmin, ",", client.Page)
-	if !flag {
-		c.Status(fiber.StatusForbidden)
-		return c.JSON(fiber.Map{
-			"status":  fiber.StatusForbidden,
-			"message": "Anda tidak bisa akses halaman ini",
-			"record":  nil,
-		})
+	if typeadmin != "MASTER" {
+		idrule, _ := strconv.Atoi(idruleadmin)
+		ruleadmin := models.Get_AdminRule("rulecomp", client_idcompany, idrule)
+		flag := models.Get_listitemsearch(ruleadmin, ",", client.Page)
+		if !flag {
+			c.Status(fiber.StatusForbidden)
+			return c.JSON(fiber.Map{
+				"status":  fiber.StatusForbidden,
+				"message": "Anda tidak bisa akses halaman ini",
+				"record":  nil,
+			})
+		} else {
+			c.Status(fiber.StatusOK)
+			return c.JSON(fiber.Map{
+				"status":  fiber.StatusOK,
+				"message": "ADMIN",
+				"record":  nil,
+			})
+		}
 	} else {
 		c.Status(fiber.StatusOK)
 		return c.JSON(fiber.Map{
@@ -162,12 +182,13 @@ func Home(c *fiber.Ctx) error {
 			"record":  nil,
 		})
 	}
+
 }
 
-func _deletelogin_admin() {
-	val_super := helpers.DeleteRedis(Fieldadmin_home_redis)
+func _deletelogin_admin(idcompany string) {
+	val_super := helpers.DeleteRedis(Fieldadmin_home_redis + "_" + strings.ToLower(idcompany))
 	log.Printf("REDIS DELETE MASTER ADMIN : %d", val_super)
 
-	val_superlog := helpers.DeleteRedis(Fieldlog_home_redis)
+	val_superlog := helpers.DeleteRedis(Fieldlog_home_redis + "_" + strings.ToLower(idcompany))
 	log.Printf("REDIS DELETE MASTER LOG : %d", val_superlog)
 }

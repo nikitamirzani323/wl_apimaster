@@ -14,7 +14,7 @@ import (
 	"github.com/nleeper/goment"
 )
 
-func Login_Model(username, password string) (helpers.Response, bool, int, error) {
+func Login_Model(username, password string) (helpers.Response, bool, string, string, int, error) {
 	var obj entities.Model_login
 	var arraobj []entities.Model_login
 	var res helpers.Response
@@ -25,10 +25,12 @@ func Login_Model(username, password string) (helpers.Response, bool, int, error)
 	flag := false
 	flag_login := false
 	temp_password := ""
+	idcompany := ""
+	typeadmin := ""
 	ruleadmin := 0
 
 	sql_select := `SELECT 
-			username_comp , password_comp, idruleadmin  
+			username_comp , password_comp, idcompany, typeadmin, idruleadmin  
 			FROM ` + configs.DB_tbl_mst_Company_admin + ` 
 			WHERE status_comp = 'ACTIVE'   
 		`
@@ -37,21 +39,25 @@ func Login_Model(username, password string) (helpers.Response, bool, int, error)
 	helpers.ErrorCheck(err)
 	for row.Next() {
 		var (
-			username_comp_db, password_comp_db string
-			idruleadmin_db                     int
+			username_comp_db, password_comp_db, idcompany_db, typeadmin_db string
+			idruleadmin_db                                                 int
 		)
-		err = row.Scan(&username_comp_db, &password_comp_db, &idruleadmin_db)
+		err = row.Scan(&username_comp_db, &password_comp_db, &idcompany_db, &typeadmin_db, &idruleadmin_db)
 		temp_username := strings.Trim(username_comp_db, "")
 		temp_username = strings.ToLower(temp_username)
 		if username_comp_db == temp_username {
 			flag_login = true
 			temp_password = password_comp_db
+			idcompany = idcompany_db
+			typeadmin = typeadmin_db
 			ruleadmin = idruleadmin_db
 		}
 
 		obj.Login_username = username_comp_db
 		obj.Login_password = password_comp_db
-		obj.Login_idadmin = idruleadmin_db
+		obj.Login_typeadmin = typeadmin_db
+		obj.Login_idcompany = idcompany
+		obj.Login_idrule = idruleadmin_db
 		arraobj = append(arraobj, obj)
 		msg = "Success"
 	}
@@ -64,7 +70,6 @@ func Login_Model(username, password string) (helpers.Response, bool, int, error)
 		log.Println("DB Hash :", temp_password)
 		if hashpass == temp_password {
 			flag = true
-			log.Println("asd")
 		}
 	}
 
@@ -73,7 +78,7 @@ func Login_Model(username, password string) (helpers.Response, bool, int, error)
 	res.Record = arraobj
 	res.Time = time.Since(render).String()
 
-	return res, flag, ruleadmin, nil
+	return res, flag, idcompany, typeadmin, ruleadmin, nil
 }
 func Update_login(username, ipaddress, timezone string) {
 	tglnow, _ := goment.New()

@@ -43,13 +43,18 @@ func Adminhome(c *fiber.Ctx) error {
 			"record":  errors,
 		})
 	}
+	user := c.Locals("jwt").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	name := claims["name"].(string)
+	temp_decp := helpers.Decryption(name)
+	_, client_idcompany, _, _ := helpers.Parsing_Decry(temp_decp, "==")
 
 	var obj entities.Model_admin
 	var arraobj []entities.Model_admin
 	var obj_listruleadmin entities.Model_adminrule
 	var arraobj_listruleadmin []entities.Model_adminrule
 	render_page := time.Now()
-	resultredis, flag := helpers.GetRedis(Fieldadmin_home_redis + "_" + strings.ToLower(client.Idcompany))
+	resultredis, flag := helpers.GetRedis(Fieldadmin_home_redis + "_" + strings.ToLower(client_idcompany))
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 	listruleadmin_RD, _, _, _ := jsonparser.Get(jsonredis, "listruleadmin")
@@ -88,7 +93,7 @@ func Adminhome(c *fiber.Ctx) error {
 		arraobj_listruleadmin = append(arraobj_listruleadmin, obj_listruleadmin)
 	})
 	if !flag {
-		result, err := models.Fetch_adminHome(client.Idcompany)
+		result, err := models.Fetch_adminHome(client_idcompany)
 		if err != nil {
 			c.Status(fiber.StatusBadRequest)
 			return c.JSON(fiber.Map{
@@ -97,7 +102,7 @@ func Adminhome(c *fiber.Ctx) error {
 				"record":  nil,
 			})
 		}
-		helpers.SetRedis(Fieldadmin_home_redis+"_"+strings.ToLower(client.Idcompany), result, 30*time.Minute)
+		helpers.SetRedis(Fieldadmin_home_redis+"_"+strings.ToLower(client_idcompany), result, 30*time.Minute)
 		log.Println("ADMIN MYSQL")
 		return c.JSON(result)
 	} else {
@@ -143,11 +148,11 @@ func AdminSave(c *fiber.Ctx) error {
 	claims := user.Claims.(jwt.MapClaims)
 	name := claims["name"].(string)
 	temp_decp := helpers.Decryption(name)
-	client_admin, _ := helpers.Parsing_Decry(temp_decp, "==")
+	client_admin, client_idcompany, _, _ := helpers.Parsing_Decry(temp_decp, "==")
 
 	//admin, idcompany, username, password, nama, email, phone, status, sData string, idrule int
 	result, err := models.Save_adminHome(
-		client_admin, client.Idcompany,
+		client_admin, client_idcompany,
 		client.Username, client.Password, client.Nama, client.Email, client.Phone,
 		client.Status, client.Sdata, client.Idrule)
 	if err != nil {
@@ -159,7 +164,7 @@ func AdminSave(c *fiber.Ctx) error {
 		})
 	}
 
-	_deleteredis_admin(client.Idcompany)
+	_deleteredis_admin(client_idcompany)
 	return c.JSON(result)
 }
 func _deleteredis_admin(idcompany string) {

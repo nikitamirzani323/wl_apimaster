@@ -8,6 +8,7 @@ import (
 	"github.com/buger/jsonparser"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/nikitamirzani323/wl_apimaster/entities"
 	"github.com/nikitamirzani323/wl_apimaster/helpers"
 	"github.com/nikitamirzani323/wl_apimaster/models"
@@ -42,11 +43,16 @@ func Loghome(c *fiber.Ctx) error {
 			"record":  errors,
 		})
 	}
+	user := c.Locals("jwt").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	name := claims["name"].(string)
+	temp_decp := helpers.Decryption(name)
+	_, client_idcompany, _, _ := helpers.Parsing_Decry(temp_decp, "==")
 
 	var obj entities.Model_log
 	var arraobj []entities.Model_log
 	render_page := time.Now()
-	resultredis, flag := helpers.GetRedis(Fieldlog_home_redis + "_" + strings.ToLower(client.Idcompany))
+	resultredis, flag := helpers.GetRedis(Fieldlog_home_redis + "_" + strings.ToLower(client_idcompany))
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
@@ -67,7 +73,7 @@ func Loghome(c *fiber.Ctx) error {
 	})
 
 	if !flag {
-		result, err := models.Fetch_logHome(client.Typeuser, client.Idcompany)
+		result, err := models.Fetch_logHome(client.Typeuser, client_idcompany)
 		if err != nil {
 			c.Status(fiber.StatusBadRequest)
 			return c.JSON(fiber.Map{
@@ -76,7 +82,7 @@ func Loghome(c *fiber.Ctx) error {
 				"record":  nil,
 			})
 		}
-		helpers.SetRedis(Fieldlog_home_redis+"_"+strings.ToLower(client.Idcompany), result, 30*time.Minute)
+		helpers.SetRedis(Fieldlog_home_redis+"_"+strings.ToLower(client_idcompany), result, 30*time.Minute)
 		log.Println("LOG MYSQL")
 		return c.JSON(result)
 	} else {

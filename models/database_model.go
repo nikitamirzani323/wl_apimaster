@@ -111,20 +111,21 @@ func CheckDBTwoField(table, field_1, value_1, field_2, value_2 string) bool {
 	}
 	return flag
 }
-func Get_AdminRule(tipe, idadmin string) string {
+func Get_AdminRule(tipe, idcompany string, idrule int) string {
 	con := db.CreateCon()
 	ctx := context.Background()
 	flag := false
 	result := ""
-	ruleadmingroup := ""
+	rulecomp := ""
 
 	sql_select := `SELECT
-		ruleadmingroup  
-		FROM ` + configs.DB_tbl_admingroup + `  
-		WHERE idadmin = $1 
+		rulecomp  
+		FROM ` + configs.DB_tbl_mst_Company_adminrule + `  
+		WHERE idcomprule = $1 
+		AND idcompany = $2 
 	`
-	row := con.QueryRowContext(ctx, sql_select, idadmin)
-	switch e := row.Scan(&ruleadmingroup); e {
+	row := con.QueryRowContext(ctx, sql_select, idrule, idcompany)
+	switch e := row.Scan(&rulecomp); e {
 	case sql.ErrNoRows:
 		flag = false
 	case nil:
@@ -135,8 +136,8 @@ func Get_AdminRule(tipe, idadmin string) string {
 	}
 	if flag {
 		switch tipe {
-		case "ruleadmingroup":
-			result = ruleadmingroup
+		case "rulecomp":
+			result = rulecomp
 		}
 	}
 	return result

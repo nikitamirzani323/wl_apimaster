@@ -9,17 +9,15 @@ type Model_adminruleall struct {
 }
 
 type Controller_adminrule struct {
-	Master    string `json:"master" validate:"required"`
-	Idcompany string `json:"idcompany" validate:"required"`
+	Master string `json:"master" validate:"required"`
 }
 
 type Controller_adminrulesave struct {
-	Sdata     string `json:"sdata" validate:"required"`
-	Page      string `json:"page" validate:"required"`
-	Idcompany string `json:"idcompany" validate:"required"`
-	Idrule    int    `json:"adminrule_idrule" validate:"required"`
-	Nmrule    string `json:"adminrule_nmrule" validate:"required"`
-	Rule      string `json:"adminrule_rule" validate:"required"`
+	Sdata  string `json:"sdata" validate:"required"`
+	Page   string `json:"page" validate:"required"`
+	Idrule int    `json:"adminrule_idrule" validate:"required"`
+	Nmrule string `json:"adminrule_nmrule" validate:"required"`
+	Rule   string `json:"adminrule_rule" validate:"required"`
 }
 
 type Responseredis_adminruleall struct {

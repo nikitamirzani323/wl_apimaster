@@ -26,23 +26,21 @@ type Model_adminsave struct {
 	Update   string `json:"admin_update"`
 }
 type Controller_admin struct {
-	Master    string `json:"master" validate:"required"`
-	Idcompany string `json:"idcompany" validate:"required"`
+	Master string `json:"master" validate:"required"`
 }
 type Controller_admindetail struct {
 	Username string `json:"agen_username" validate:"required"`
 }
 type Controller_adminsave struct {
-	Sdata     string `json:"sdata" validate:"required"`
-	Page      string `json:"page" validate:"required"`
-	Idcompany string `json:"idcompany" validate:"required"`
-	Username  string `json:"admin_username" validate:"required"`
-	Password  string `json:"admin_password"`
-	Nama      string `json:"admin_nama" validate:"required"`
-	Email     string `json:"admin_email" validate:"required"`
-	Phone     string `json:"admin_phone" validate:"required"`
-	Idrule    int    `json:"admin_idrule" validate:"required"`
-	Status    string `json:"admin_status" validate:"required"`
+	Sdata    string `json:"sdata" validate:"required"`
+	Page     string `json:"page" validate:"required"`
+	Username string `json:"admin_username" validate:"required"`
+	Password string `json:"admin_password"`
+	Nama     string `json:"admin_nama" validate:"required"`
+	Email    string `json:"admin_email" validate:"required"`
+	Phone    string `json:"admin_phone" validate:"required"`
+	Idrule   int    `json:"admin_idrule" validate:"required"`
+	Status   string `json:"admin_status" validate:"required"`
 }
 
 type Responseredis_adminrule struct {
