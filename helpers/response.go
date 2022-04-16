@@ -14,11 +14,11 @@ type Responsemovie struct {
 	Totalrecord int         `json:"totalrecord"`
 	Time        string      `json:"time"`
 }
-type ResponseCompany struct {
+type ResponseAgen struct {
 	Status   int         `json:"status"`
 	Message  string      `json:"message"`
 	Record   interface{} `json:"record"`
-	Listcurr interface{} `json:"listcurr"`
+	Listcurr interface{} `json:"listcurrency"`
 	Time     string      `json:"time"`
 }
 type ResponseAdmin struct {

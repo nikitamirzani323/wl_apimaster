@@ -15,7 +15,7 @@ type Model_agen struct {
 	Agen_update      string `json:"agen_update"`
 }
 type Model_agencurr struct {
-	Curr_idcurr string `json:"curr_idcur"`
+	Curr_idcurr string `json:"curr_idcurr"`
 	Curr_nama   string `json:"curr_nama"`
 }
 type Model_agenadmin struct {

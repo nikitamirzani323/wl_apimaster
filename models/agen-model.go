@@ -13,10 +13,10 @@ import (
 	"github.com/nleeper/goment"
 )
 
-func Fetch_agenHome(idcompany string) (helpers.ResponseCompany, error) {
+func Fetch_agenHome(idcompany string) (helpers.ResponseAgen, error) {
 	var obj entities.Model_agen
 	var arraobj []entities.Model_agen
-	var res helpers.ResponseCompany
+	var res helpers.ResponseAgen
 	msg := "Data Not Found"
 	con := db.CreateCon()
 	ctx := context.Background()

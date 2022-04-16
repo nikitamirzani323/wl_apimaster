@@ -57,7 +57,7 @@ func Agenhome(c *fiber.Ctx) error {
 	resultredis, flag := helpers.GetRedis(Fieldagen_home_redis + "_" + strings.ToLower(client_idcompany))
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
-	listcurr_RD, _, _, _ := jsonparser.Get(jsonredis, "listcurr")
+	listcurr_RD, _, _, _ := jsonparser.Get(jsonredis, "listcurrency")
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 		agen_idagen, _ := jsonparser.GetString(value, "agen_idagen")
 		agen_startjoin, _ := jsonparser.GetString(value, "agen_startjoin")
