@@ -9,12 +9,12 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/nikitamirzani323/wl_api_master/entities"
-	"github.com/nikitamirzani323/wl_api_master/helpers"
-	"github.com/nikitamirzani323/wl_api_master/models"
+	"github.com/nikitamirzani323/wl_apisuper/entities"
+	"github.com/nikitamirzani323/wl_apisuper/helpers"
+	"github.com/nikitamirzani323/wl_apisuper/models"
 )
 
-const Fieldcompany_home_redis = "LISTCOMPANY_MASTER_WL"
+const Fieldcompany_home_redis = "LISTCOMPANY_SUPER_WL"
 
 func Companyhome(c *fiber.Ctx) error {
 	var errors []*helpers.ErrorResponse
@@ -296,12 +296,15 @@ func CompanySavelistadmin(c *fiber.Ctx) error {
 	return c.JSON(result)
 }
 func _deleteredis_company(idcompany string) {
-	val_master := helpers.DeleteRedis(Fieldcompany_home_redis)
-	log.Printf("REDIS DELETE MASTER COMPANY : %d", val_master)
+	val_super := helpers.DeleteRedis(Fieldcompany_home_redis)
+	log.Printf("REDIS DELETE SUPER COMPANY : %d", val_super)
+
+	val_superlog := helpers.DeleteRedis(Fieldlog_home_redis)
+	log.Printf("REDIS DELETE SUPER LOG : %d", val_superlog)
 
 	if idcompany != "" {
 		val_companyadmin := helpers.DeleteRedis(Fieldcompany_home_redis + "_LISTADMIN_" + strings.ToLower(idcompany))
-		log.Printf("REDIS DELETE MASTER COMPANY LISTADMIN : %d", val_companyadmin)
+		log.Printf("REDIS DELETE SUPER COMPANY LISTADMIN : %d", val_companyadmin)
 	}
 
 }

@@ -8,12 +8,12 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/nikitamirzani323/wl_api_master/entities"
-	"github.com/nikitamirzani323/wl_api_master/helpers"
-	"github.com/nikitamirzani323/wl_api_master/models"
+	"github.com/nikitamirzani323/wl_apisuper/entities"
+	"github.com/nikitamirzani323/wl_apisuper/helpers"
+	"github.com/nikitamirzani323/wl_apisuper/models"
 )
 
-const Fieldadmin_home_redis = "LISTADMIN_MASTER_WL"
+const Fieldadmin_home_redis = "LISTADMIN_SUPER_WL"
 
 func Adminhome(c *fiber.Ctx) error {
 	var errors []*helpers.ErrorResponse
@@ -157,6 +157,9 @@ func AdminSave(c *fiber.Ctx) error {
 	return c.JSON(result)
 }
 func _deleteredis_admin() {
-	val_master := helpers.DeleteRedis(Fieldadmin_home_redis)
-	log.Printf("REDIS DELETE MASTER ADMIN : %d", val_master)
+	val_super := helpers.DeleteRedis(Fieldadmin_home_redis)
+	log.Printf("REDIS DELETE SUPER ADMIN : %d", val_super)
+
+	val_superlog := helpers.DeleteRedis(Fieldlog_home_redis)
+	log.Printf("REDIS DELETE SUPER LOG : %d", val_superlog)
 }

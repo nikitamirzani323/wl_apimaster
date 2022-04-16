@@ -7,10 +7,10 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/nikitamirzani323/wl_api_master/configs"
-	"github.com/nikitamirzani323/wl_api_master/db"
-	"github.com/nikitamirzani323/wl_api_master/entities"
-	"github.com/nikitamirzani323/wl_api_master/helpers"
+	"github.com/nikitamirzani323/wl_apisuper/configs"
+	"github.com/nikitamirzani323/wl_apisuper/db"
+	"github.com/nikitamirzani323/wl_apisuper/entities"
+	"github.com/nikitamirzani323/wl_apisuper/helpers"
 	"github.com/nleeper/goment"
 )
 
@@ -82,12 +82,17 @@ func Update_login(username, ipaddress, timezone string) {
 			WHERE username  = $6 
 			AND statuslogin = 'Y' 
 		`
+	lastlogin := tglnow.Format("YYYY-MM-DD HH:mm:ss")
 	flag_update, msg_update := Exec_SQL(sql_update, configs.DB_tbl_admin, "UPDATE",
-		tglnow.Format("YYYY-MM-DD HH:mm:ss"),
-		ipaddress, timezone, username,
+		lastlogin, ipaddress, timezone, username,
 		tglnow.Format("YYYY-MM-DD HH:mm:ss"), username)
 
 	if flag_update {
 		log.Println(msg_update)
 	}
+
+	notelog := ""
+	notelog += "DATE : " + lastlogin + " <br>"
+	notelog += "IP : " + ipaddress
+	Insert_log("SUPERADMIN", "", username, "LOGIN", "UPDATE", notelog)
 }

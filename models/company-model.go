@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/nikitamirzani323/wl_api_master/configs"
-	"github.com/nikitamirzani323/wl_api_master/db"
-	"github.com/nikitamirzani323/wl_api_master/entities"
-	"github.com/nikitamirzani323/wl_api_master/helpers"
+	"github.com/nikitamirzani323/wl_apisuper/configs"
+	"github.com/nikitamirzani323/wl_apisuper/db"
+	"github.com/nikitamirzani323/wl_apisuper/entities"
+	"github.com/nikitamirzani323/wl_apisuper/helpers"
 	"github.com/nleeper/goment"
 )
 
@@ -138,6 +138,17 @@ func Save_companyHome(
 				flag = true
 				msg = "Succes"
 				log.Println(msg_insert)
+
+				notelog := ""
+				notelog += "NEW COMPANY <br>"
+				notelog += "IDCOMPANY : " + idcompany + "<br>"
+				notelog += "CURRENCY : " + idcurr + "<br>"
+				notelog += "COMPANY : " + nmcompany + "<br>"
+				notelog += "OWNER : " + nmowner + "<br>"
+				notelog += "PHONE : " + phoneowner + "<br>"
+				notelog += "EMAIL : " + emailowner + "<br>"
+				notelog += "STATUS : " + status
+				Insert_log("SUPERADMIN", "", admin, "COMPANY", "INSERT", notelog)
 			} else {
 				log.Println(msg_insert)
 			}
@@ -161,6 +172,15 @@ func Save_companyHome(
 			flag = true
 			msg = "Succes"
 			log.Println(msg_update)
+
+			notelog := ""
+			notelog += "UPDATE COMPANY <br>"
+			notelog += "COMPANY : " + nmcompany + "<br>"
+			notelog += "OWNER : " + nmowner + "<br>"
+			notelog += "PHONE : " + phoneowner + "<br>"
+			notelog += "EMAIL : " + emailowner + "<br>"
+			notelog += "STATUS : " + status
+			Insert_log("SUPERADMIN", "", admin, "COMPANY", "UPDATE", notelog)
 		} else {
 			log.Println(msg_update)
 		}

@@ -9,12 +9,12 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/nikitamirzani323/wl_api_master/entities"
-	"github.com/nikitamirzani323/wl_api_master/helpers"
-	"github.com/nikitamirzani323/wl_api_master/models"
+	"github.com/nikitamirzani323/wl_apisuper/entities"
+	"github.com/nikitamirzani323/wl_apisuper/helpers"
+	"github.com/nikitamirzani323/wl_apisuper/models"
 )
 
-const Field_login_redis = "LISTLOGINADMIN_MASTER_WL"
+const Field_login_redis = "LISTLOGINADMIN_SUPER_WL"
 
 func CheckLogin(c *fiber.Ctx) error {
 	msg := "Username and Password not register"
@@ -77,12 +77,12 @@ func CheckLogin(c *fiber.Ctx) error {
 			flag_login = true
 			ruleadmin = rule_model
 			helpers.SetRedis(Field_login_redis, result, 30*time.Hour)
-			log.Println("LIST LOGIN ADMIN MASTER MYSQL")
+			log.Println("LIST LOGIN ADMIN SUPER MYSQL")
 
 		}
 
 	} else {
-		log.Println("LIST LOGIN ADMIN MASTER CACHE")
+		log.Println("LIST LOGIN ADMIN SUPER CACHE")
 
 	}
 	temp_token := ""
@@ -163,19 +163,11 @@ func Home(c *fiber.Ctx) error {
 		})
 	}
 }
-func GeneratorPassword(c *fiber.Ctx) error {
-	render_page := time.Now()
-	client := new(entities.Login)
 
-	pwd := helpers.HashPasswordMD5(client.Password)
-
-	return c.JSON(fiber.Map{
-		"status":   fiber.StatusOK,
-		"password": pwd,
-		"time":     time.Since(render_page).String(),
-	})
-}
 func _deletelogin_admin() {
-	val_master := helpers.DeleteRedis(Fieldadmin_home_redis)
-	log.Printf("REDIS DELETE MASTER ADMIN : %d", val_master)
+	val_super := helpers.DeleteRedis(Fieldadmin_home_redis)
+	log.Printf("REDIS DELETE SUPER ADMIN : %d", val_super)
+
+	val_superlog := helpers.DeleteRedis(Fieldlog_home_redis)
+	log.Printf("REDIS DELETE SUPER LOG : %d", val_superlog)
 }

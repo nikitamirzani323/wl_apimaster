@@ -13,7 +13,7 @@ WORKDIR /app
 RUN apk add tzdata
 COPY --from=apimaster /appbuilds/binary .
 COPY --from=apimaster /appbuilds/.env /app/.env
-ENV PORT=1011
+ENV PORT=1012
 ENV DB_USER="admindb"
 ENV DB_PASS="asd123QWE"
 ENV DB_HOST="128.199.124.131"

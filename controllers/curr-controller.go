@@ -8,12 +8,12 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/nikitamirzani323/wl_api_master/entities"
-	"github.com/nikitamirzani323/wl_api_master/helpers"
-	"github.com/nikitamirzani323/wl_api_master/models"
+	"github.com/nikitamirzani323/wl_apisuper/entities"
+	"github.com/nikitamirzani323/wl_apisuper/helpers"
+	"github.com/nikitamirzani323/wl_apisuper/models"
 )
 
-const Fieldcurr_home_redis = "LISTCURR_MASTER_WL"
+const Fieldcurr_home_redis = "LISTCURR_SUPER_WL"
 
 func Currhome(c *fiber.Ctx) error {
 	var errors []*helpers.ErrorResponse
@@ -135,6 +135,9 @@ func CurrSave(c *fiber.Ctx) error {
 	return c.JSON(result)
 }
 func _deleteredis_curr() {
-	val_master := helpers.DeleteRedis(Fieldcurr_home_redis)
-	log.Printf("REDIS DELETE MASTER CURR : %d", val_master)
+	val_super := helpers.DeleteRedis(Fieldcurr_home_redis)
+	log.Printf("REDIS DELETE SUPER CURR : %d", val_super)
+
+	val_superlog := helpers.DeleteRedis(Fieldlog_home_redis)
+	log.Printf("REDIS DELETE SUPER LOG : %d", val_superlog)
 }
