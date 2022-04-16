@@ -33,10 +33,10 @@ func Init() *fiber.App {
 	api.Post("saveadminrule", controllers.AdminruleSave)
 	api.Post("allcurr", controllers.Currhome)
 	api.Post("savecurr", controllers.CurrSave)
-	api.Post("company", controllers.Companyhome)
-	api.Post("savecompany", controllers.CompanySave)
-	api.Post("companylistadmin", controllers.CompanyListadmin)
-	api.Post("savecompanylistadmin", controllers.CompanySavelistadmin)
+	api.Post("agen", controllers.Agenhome)
+	api.Post("saveagen", controllers.AgenSave)
+	api.Post("agenlistadmin", controllers.AgenListadmin)
+	api.Post("saveagenlistadmin", controllers.AgenSavelistadmin)
 	api.Post("log", controllers.Loghome)
 
 	return app
