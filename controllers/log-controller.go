@@ -47,7 +47,7 @@ func Loghome(c *fiber.Ctx) error {
 	claims := user.Claims.(jwt.MapClaims)
 	name := claims["name"].(string)
 	temp_decp := helpers.Decryption(name)
-	_, client_idcompany, _, _ := helpers.Parsing_Decry(temp_decp, "==")
+	_, client_idcompany, client_tipe, _ := helpers.Parsing_Decry(temp_decp, "==")
 
 	var obj entities.Model_log
 	var arraobj []entities.Model_log
@@ -73,7 +73,7 @@ func Loghome(c *fiber.Ctx) error {
 	})
 
 	if !flag {
-		result, err := models.Fetch_logHome(client.Typeuser, client_idcompany)
+		result, err := models.Fetch_logHome(client_tipe, client_idcompany)
 		if err != nil {
 			c.Status(fiber.StatusBadRequest)
 			return c.JSON(fiber.Map{

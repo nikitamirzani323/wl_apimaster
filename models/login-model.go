@@ -102,5 +102,5 @@ func Update_login(username, ipaddress, timezone, idcompany string) {
 	notelog := ""
 	notelog += "DATE : " + lastlogin + " <br>"
 	notelog += "IP : " + ipaddress
-	Insert_log("MASTER", "", username, "LOGIN", "UPDATE", notelog)
+	Insert_log("MASTER", idcompany, username, "LOGIN", "UPDATE", notelog)
 }

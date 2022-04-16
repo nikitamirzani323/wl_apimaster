@@ -28,7 +28,7 @@ func Fetch_logHome(typeuser, idcompany string) (helpers.Response, error) {
 			ORDER BY datetimelog DESC LIMIT 300 
 		`
 
-	row, err := con.QueryContext(ctx, sql_select, typeuser)
+	row, err := con.QueryContext(ctx, sql_select, typeuser, idcompany)
 
 	helpers.ErrorCheck(err)
 	for row.Next() {
