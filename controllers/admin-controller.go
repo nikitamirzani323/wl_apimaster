@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"log"
+	"strings"
 	"time"
 
 	"github.com/buger/jsonparser"
@@ -48,16 +49,17 @@ func Adminhome(c *fiber.Ctx) error {
 	var obj_listruleadmin entities.Model_adminrule
 	var arraobj_listruleadmin []entities.Model_adminrule
 	render_page := time.Now()
-	resultredis, flag := helpers.GetRedis(Fieldadmin_home_redis)
+	resultredis, flag := helpers.GetRedis(Fieldadmin_home_redis + "_" + strings.ToLower(client.Idcompany))
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 	listruleadmin_RD, _, _, _ := jsonparser.Get(jsonredis, "listruleadmin")
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 		admin_username, _ := jsonparser.GetString(value, "admin_username")
+		admin_type, _ := jsonparser.GetString(value, "admin_type")
+		admin_rule, _ := jsonparser.GetInt(value, "admin_rule")
 		admin_nama, _ := jsonparser.GetString(value, "admin_nama")
-		admin_rule, _ := jsonparser.GetString(value, "admin_rule")
-		admin_joindate, _ := jsonparser.GetString(value, "admin_joindate")
-		admin_timezone, _ := jsonparser.GetString(value, "admin_timezone")
+		admin_phone, _ := jsonparser.GetString(value, "admin_phone")
+		admin_email, _ := jsonparser.GetString(value, "admin_email")
 		admin_lastlogin, _ := jsonparser.GetString(value, "admin_lastlogin")
 		admin_lastipaddres, _ := jsonparser.GetString(value, "admin_lastipaddres")
 		admin_status, _ := jsonparser.GetString(value, "admin_status")
@@ -65,10 +67,11 @@ func Adminhome(c *fiber.Ctx) error {
 		admin_update, _ := jsonparser.GetString(value, "admin_update")
 
 		obj.Admin_username = admin_username
+		obj.Admin_type = admin_type
+		obj.Admin_rule = int(admin_rule)
 		obj.Admin_nama = admin_nama
-		obj.Admin_rule = admin_rule
-		obj.Admin_joindate = admin_joindate
-		obj.Admin_timezone = admin_timezone
+		obj.Admin_phone = admin_phone
+		obj.Admin_email = admin_email
 		obj.Admin_lastlogin = admin_lastlogin
 		obj.Admin_lastIpaddress = admin_lastipaddres
 		obj.Admin_status = admin_status
@@ -77,13 +80,15 @@ func Adminhome(c *fiber.Ctx) error {
 		arraobj = append(arraobj, obj)
 	})
 	jsonparser.ArrayEach(listruleadmin_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
-		adminrule_name, _ := jsonparser.GetString(value, "adminrule_idruleadmin")
+		adminrule_idruleadmin, _ := jsonparser.GetInt(value, "adminrule_idruleadmin")
+		adminrule_nmrule, _ := jsonparser.GetString(value, "adminrule_nmrule")
 
-		obj_listruleadmin.Admin_idrule = adminrule_name
+		obj_listruleadmin.Admin_idrule = int(adminrule_idruleadmin)
+		obj_listruleadmin.Admin_nmrule = adminrule_nmrule
 		arraobj_listruleadmin = append(arraobj_listruleadmin, obj_listruleadmin)
 	})
 	if !flag {
-		result, err := models.Fetch_adminHome()
+		result, err := models.Fetch_adminHome(client.Idcompany)
 		if err != nil {
 			c.Status(fiber.StatusBadRequest)
 			return c.JSON(fiber.Map{
@@ -92,7 +97,7 @@ func Adminhome(c *fiber.Ctx) error {
 				"record":  nil,
 			})
 		}
-		helpers.SetRedis(Fieldadmin_home_redis, result, 30*time.Minute)
+		helpers.SetRedis(Fieldadmin_home_redis+"_"+strings.ToLower(client.Idcompany), result, 30*time.Minute)
 		log.Println("ADMIN MYSQL")
 		return c.JSON(result)
 	} else {
@@ -140,10 +145,11 @@ func AdminSave(c *fiber.Ctx) error {
 	temp_decp := helpers.Decryption(name)
 	client_admin, _ := helpers.Parsing_Decry(temp_decp, "==")
 
+	//admin, idcompany, username, password, nama, email, phone, status, sData string, idrule int
 	result, err := models.Save_adminHome(
-		client_admin,
-		client.Username, client.Password, client.Nama,
-		client.Rule, client.Status, client.Sdata)
+		client_admin, client.Idcompany,
+		client.Username, client.Password, client.Nama, client.Email, client.Phone,
+		client.Status, client.Sdata, client.Idrule)
 	if err != nil {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
@@ -153,13 +159,13 @@ func AdminSave(c *fiber.Ctx) error {
 		})
 	}
 
-	_deleteredis_admin()
+	_deleteredis_admin(client.Idcompany)
 	return c.JSON(result)
 }
-func _deleteredis_admin() {
-	val_super := helpers.DeleteRedis(Fieldadmin_home_redis)
+func _deleteredis_admin(idcompany string) {
+	val_super := helpers.DeleteRedis(Fieldadmin_home_redis + "_" + strings.ToLower(idcompany))
 	log.Printf("REDIS DELETE MASTER ADMIN : %d", val_super)
 
-	val_superlog := helpers.DeleteRedis(Fieldlog_home_redis)
+	val_superlog := helpers.DeleteRedis(Fieldlog_home_redis + "_" + strings.ToLower(idcompany))
 	log.Printf("REDIS DELETE MASTER LOG : %d", val_superlog)
 }

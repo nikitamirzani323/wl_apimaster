@@ -46,20 +46,20 @@ func CheckLogin(c *fiber.Ctx) error {
 		})
 	}
 	flag_login := false
-	ruleadmin := ""
+	ruleadmin := 0
 	resultredis, flag := helpers.GetRedis(Field_login_redis)
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 		login_username, _ := jsonparser.GetString(value, "login_username")
 		login_password, _ := jsonparser.GetString(value, "login_password")
-		login_idadmin, _ := jsonparser.GetString(value, "login_idadmin")
+		login_idadmin, _ := jsonparser.GetInt(value, "login_idadmin")
 
 		if login_username == client.Username {
 			hashpass := helpers.HashPasswordMD5(client.Password)
 			if hashpass == login_password {
 				flag_login = true
-				ruleadmin = login_idadmin
+				ruleadmin = int(login_idadmin)
 			}
 		}
 	})
@@ -90,7 +90,7 @@ func CheckLogin(c *fiber.Ctx) error {
 		_deletelogin_admin()
 		models.Update_login(client.Username, client.Ipaddress, client.Timezone)
 
-		dataclient := client.Username + "==" + ruleadmin
+		dataclient := client.Username + "==" + strconv.Itoa(ruleadmin)
 		dataclient_encr, keymap := helpers.Encryption(dataclient)
 		dataclient_encr_final := dataclient_encr + "|" + strconv.Itoa(keymap)
 		t, err := helpers.GenerateNewAccessToken(dataclient_encr_final)

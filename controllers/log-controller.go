@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"log"
+	"strings"
 	"time"
 
 	"github.com/buger/jsonparser"
@@ -45,7 +46,7 @@ func Loghome(c *fiber.Ctx) error {
 	var obj entities.Model_log
 	var arraobj []entities.Model_log
 	render_page := time.Now()
-	resultredis, flag := helpers.GetRedis(Fieldlog_home_redis)
+	resultredis, flag := helpers.GetRedis(Fieldlog_home_redis + "_" + strings.ToLower(client.Idcompany))
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
@@ -66,7 +67,7 @@ func Loghome(c *fiber.Ctx) error {
 	})
 
 	if !flag {
-		result, err := models.Fetch_logHome(client.Typeuser)
+		result, err := models.Fetch_logHome(client.Typeuser, client.Idcompany)
 		if err != nil {
 			c.Status(fiber.StatusBadRequest)
 			return c.JSON(fiber.Map{
@@ -75,7 +76,7 @@ func Loghome(c *fiber.Ctx) error {
 				"record":  nil,
 			})
 		}
-		helpers.SetRedis(Fieldlog_home_redis, result, 30*time.Minute)
+		helpers.SetRedis(Fieldlog_home_redis+"_"+strings.ToLower(client.Idcompany), result, 30*time.Minute)
 		log.Println("LOG MYSQL")
 		return c.JSON(result)
 	} else {

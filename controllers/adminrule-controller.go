@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"log"
+	"strings"
 	"time"
 
 	"github.com/buger/jsonparser"
@@ -43,23 +44,29 @@ func Adminrulehome(c *fiber.Ctx) error {
 		})
 	}
 
-	var obj entities.Responseredis_adminruleall
-	var arraobj []entities.Responseredis_adminruleall
+	var obj entities.Model_adminruleall
+	var arraobj []entities.Model_adminruleall
 	render_page := time.Now()
-	resultredis, flag := helpers.GetRedis(Fieldadminrule_home_redis)
+	resultredis, flag := helpers.GetRedis(Fieldadminrule_home_redis + "_" + strings.ToLower(client.Idcompany))
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
-		Adminrule_idadmin, _ := jsonparser.GetString(value, "adminrule_idadmin")
-		Adminrule_rule, _ := jsonparser.GetString(value, "adminrule_rule")
+		adminrule_idrule, _ := jsonparser.GetInt(value, "adminrule_idrule")
+		adminrule_nmrule, _ := jsonparser.GetString(value, "adminrule_nmrule")
+		adminrule_rule, _ := jsonparser.GetString(value, "adminrule_rule")
+		adminrule_create, _ := jsonparser.GetString(value, "adminrule_create")
+		adminrule_update, _ := jsonparser.GetString(value, "adminrule_update")
 
-		obj.Adminrule_idadmin = Adminrule_idadmin
-		obj.Adminrule_rule = Adminrule_rule
+		obj.Adminrule_idrule = int(adminrule_idrule)
+		obj.Adminrule_nmrule = adminrule_nmrule
+		obj.Adminrule_rule = adminrule_rule
+		obj.Adminrule_create = adminrule_create
+		obj.Adminrule_update = adminrule_update
 		arraobj = append(arraobj, obj)
 	})
 
 	if !flag {
-		result, err := models.Fetch_adminruleHome()
+		result, err := models.Fetch_adminruleHome(client.Idcompany)
 		if err != nil {
 			c.Status(fiber.StatusBadRequest)
 			return c.JSON(fiber.Map{
@@ -68,7 +75,7 @@ func Adminrulehome(c *fiber.Ctx) error {
 				"record":  nil,
 			})
 		}
-		helpers.SetRedis(Fieldadminrule_home_redis, result, 60*time.Minute)
+		helpers.SetRedis(Fieldadminrule_home_redis+"_"+strings.ToLower(client.Idcompany), result, 60*time.Minute)
 		log.Println("ADMIN RULE MYSQL")
 		return c.JSON(result)
 	} else {
@@ -115,7 +122,8 @@ func AdminruleSave(c *fiber.Ctx) error {
 	temp_decp := helpers.Decryption(name)
 	client_admin, _ := helpers.Parsing_Decry(temp_decp, "==")
 
-	result, err := models.Save_adminrule(client_admin, client.Idadmin, client.Rule, client.Sdata)
+	//admin, idcompany, name, rule, sData string, idrule int
+	result, err := models.Save_adminrule(client_admin, client.Idcompany, client.Nmrule, client.Rule, client.Sdata, client.Idrule)
 	if err != nil {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
@@ -125,13 +133,13 @@ func AdminruleSave(c *fiber.Ctx) error {
 		})
 	}
 
-	_deleteredis_adminrule()
+	_deleteredis_adminrule(client.Idcompany)
 	return c.JSON(result)
 }
-func _deleteredis_adminrule() {
-	val_super := helpers.DeleteRedis(Fieldadminrule_home_redis)
+func _deleteredis_adminrule(idcompany string) {
+	val_super := helpers.DeleteRedis(Fieldadminrule_home_redis + "_" + strings.ToLower(idcompany))
 	log.Printf("REDIS DELETE MASTER ADMIN RULE : %d", val_super)
 
-	val_superlog := helpers.DeleteRedis(Fieldlog_home_redis)
+	val_superlog := helpers.DeleteRedis(Fieldlog_home_redis + "_" + strings.ToLower(idcompany))
 	log.Printf("REDIS DELETE MASTER LOG : %d", val_superlog)
 }

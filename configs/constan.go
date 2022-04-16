@@ -1,13 +1,16 @@
 package configs
 
 const (
-	DB_tbl_counter           string = "tbl_counter"
-	DB_tbl_admin             string = "tbl_admin"
-	DB_tbl_admingroup        string = "tbl_admingroup"
-	DB_tbl_mst_currency      string = "tbl_mst_currency"
-	DB_tbl_mst_company       string = "tbl_mst_company"
-	DB_tbl_mst_company_admin string = "tbl_mst_company_admin"
-	DB_tbl_trx_log           string = "tbl_trx_log"
+	DB_tbl_counter               string = "tbl_counter"
+	DB_tbl_admin                 string = "tbl_admin"
+	DB_tbl_admingroup            string = "tbl_admingroup"
+	DB_tbl_mst_currency          string = "tbl_mst_currency"
+	DB_tbl_mst_Company           string = "tbl_mst_company"
+	DB_tbl_mst_Company_admin     string = "tbl_mst_company_admin"
+	DB_tbl_mst_Company_adminrule string = "tbl_mst_company_adminrule"
+	DB_tbl_mst_Agen              string = "tbl_mst_agen"
+	DB_tbl_mst_Agen_admin        string = "tbl_mst_agen_admin"
+	DB_tbl_trx_log               string = "tbl_trx_log"
 )
 
 const Sourcechar string = `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 !@#$%^&*()-_=+[]{};:,.<>?/`

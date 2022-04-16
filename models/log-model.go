@@ -11,7 +11,7 @@ import (
 	"github.com/nikitamirzani323/wl_apimaster/helpers"
 )
 
-func Fetch_logHome(typeuser string) (helpers.Response, error) {
+func Fetch_logHome(typeuser, idcompany string) (helpers.Response, error) {
 	var obj entities.Model_log
 	var arraobj []entities.Model_log
 	var res helpers.Response
@@ -24,7 +24,7 @@ func Fetch_logHome(typeuser string) (helpers.Response, error) {
 			idlog, to_char(COALESCE(datetimelog,now()), 'YYYY-MM-DD HH24:MI:SS'), userlog, pagelog,  
 			tipelog, notelog    
 			FROM ` + configs.DB_tbl_trx_log + ` 
-			WHERE typeuser=$1 
+			WHERE typeuser=$1 AND company=$2 
 			ORDER BY datetimelog DESC LIMIT 300 
 		`
 

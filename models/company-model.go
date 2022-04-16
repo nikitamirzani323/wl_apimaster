@@ -27,7 +27,7 @@ func Fetch_companyHome() (helpers.ResponseCompany, error) {
 			idcurr , nmcompany, nmowner, phoneowner, emailowner, companyurl, statuscompany, 
 			createcompany, to_char(COALESCE(createdatecompany,now()), 'YYYY-MM-DD HH24:MI:SS') as createdatecompany, 
 			updatecompany, to_char(COALESCE(updatedatecompany,now()), 'YYYY-MM-DD HH24:MI:SS') as updatedatecompany 
-			FROM ` + configs.DB_tbl_mst_company + ` 
+			FROM ` + configs.DB_tbl_mst_Agen + ` 
 			ORDER BY createcompany DESC 
 		`
 
@@ -116,11 +116,11 @@ func Save_companyHome(
 	flag := false
 
 	if sData == "New" {
-		flag = CheckDB(configs.DB_tbl_mst_company, "idcompany", idcompany)
+		flag = CheckDB(configs.DB_tbl_mst_Agen, "idcompany", idcompany)
 		if !flag {
 			sql_insert := `
 				insert into
-				` + configs.DB_tbl_mst_company + ` (
+				` + configs.DB_tbl_mst_Agen + ` (
 					idcompany , startjoincompany, idcurr, nmcompany, nmowner, 
 					phoneowner, emailowner, companyurl, statuscompany
 					createcompany, createdatecompany
@@ -130,7 +130,7 @@ func Save_companyHome(
 					$10, $11 
 				)
 			`
-			flag_insert, msg_insert := Exec_SQL(sql_insert, configs.DB_tbl_mst_company, "INSERT",
+			flag_insert, msg_insert := Exec_SQL(sql_insert, configs.DB_tbl_mst_Agen, "INSERT",
 				idcompany, tglnow.Format("YYYY-MM-DD HH:mm:ss"), idcurr, nmcompany, nmowner, phoneowner, emailowner, companyurl, status,
 				admin, tglnow.Format("YYYY-MM-DD HH:mm:ss"))
 
@@ -158,13 +158,13 @@ func Save_companyHome(
 	} else {
 		sql_update2 := `
 				UPDATE 
-				` + configs.DB_tbl_mst_company + `   
+				` + configs.DB_tbl_mst_Agen + `   
 				SET nmcompany=$1, nmowner=$2, phoneowner=$3, emailowner=$4,  
 				companyurl =$5, statuscompany=$6,  
 				updatecompany=$7, updatedatecompany=$8 
 				WHERE idcompany =$9 
 			`
-		flag_update, msg_update := Exec_SQL(sql_update2, configs.DB_tbl_mst_company, "UPDATE",
+		flag_update, msg_update := Exec_SQL(sql_update2, configs.DB_tbl_mst_Agen, "UPDATE",
 			nmcompany, nmowner, phoneowner, emailowner, companyurl, status,
 			admin, tglnow.Format("YYYY-MM-DD HH:mm:ss"), idcompany)
 
@@ -207,7 +207,7 @@ func Fetch_companyListAdmin(idcompany string) (helpers.Response, error) {
 			status_comp , to_char(COALESCE(lastlogin_comp,now()), 'YYYY-MM-DD HH24:MI:SS'), lastipaddres_comp, 
 			createcomp_admin, to_char(COALESCE(createdatecomp_admin,now()), 'YYYY-MM-DD HH24:MI:SS') as createdatecomp_admin, 
 			updatecomp_admin, to_char(COALESCE(updatedatecomp_admin,now()), 'YYYY-MM-DD HH24:MI:SS') as updatedatecomp_admin 
-			FROM ` + configs.DB_tbl_mst_company_admin + ` 
+			FROM ` + configs.DB_tbl_mst_Agen + ` 
 			WHERE idcompany = $1 
 			ORDER BY lastlogin_comp DESC 
 		`
@@ -269,11 +269,11 @@ func Save_companylistadmin(
 	flag := false
 
 	if sData == "New" {
-		flag = CheckDB(configs.DB_tbl_mst_company_admin, "username_comp", username)
+		flag = CheckDB(configs.DB_tbl_mst_Agen, "username_comp", username)
 		if !flag {
 			sql_insert := `
 				insert into
-				` + configs.DB_tbl_mst_company_admin + ` (
+				` + configs.DB_tbl_mst_Agen + ` (
 					username_comp , password_comp, idcompany, typeadmin, idruleadmin,  
 					nama_comp, email_comp, phone_comp, status_comp,   
 					createcomp_admin, createdatecomp_admin 
@@ -283,7 +283,7 @@ func Save_companylistadmin(
 					$10, $11  
 				)
 			`
-			flag_insert, msg_insert := Exec_SQL(sql_insert, configs.DB_tbl_mst_company_admin, "INSERT",
+			flag_insert, msg_insert := Exec_SQL(sql_insert, configs.DB_tbl_mst_Agen, "INSERT",
 				username, password, idcompany, "MASTER", "0",
 				name, email, phone, status, admin, tglnow.Format("YYYY-MM-DD HH:mm:ss"))
 
@@ -302,12 +302,12 @@ func Save_companylistadmin(
 			haspwd := helpers.HashPasswordMD5(password)
 			sql_update2 := `
 				UPDATE 
-				` + configs.DB_tbl_mst_company_admin + `   
+				` + configs.DB_tbl_mst_Agen + `   
 				SET password_comp=$1, nama_comp=$2, email_comp=$3, phone_comp=$4,  
 				status_comp=$5, updatecomp_admin=$6, updatedatecomp_admin=$7 
 				WHERE idcompany =$8 AND username_comp=$9   
 			`
-			flag_update, msg_update := Exec_SQL(sql_update2, configs.DB_tbl_mst_company_admin, "UPDATE",
+			flag_update, msg_update := Exec_SQL(sql_update2, configs.DB_tbl_mst_Agen, "UPDATE",
 				haspwd, name, email, phone, status,
 				admin, tglnow.Format("YYYY-MM-DD HH:mm:ss"), idcompany, username)
 
@@ -321,12 +321,12 @@ func Save_companylistadmin(
 		} else {
 			sql_update2 := `
 				UPDATE 
-				` + configs.DB_tbl_mst_company_admin + `   
+				` + configs.DB_tbl_mst_Agen + `   
 				SET nama_comp=$1, email_comp=$2, phone_comp=$3,  
 				status_comp=$4, updatecomp_admin=$5, updatedatecomp_admin=$6 
 				WHERE idcompany=$7 AND username_comp=$8  
 			`
-			flag_update, msg_update := Exec_SQL(sql_update2, configs.DB_tbl_mst_company_admin, "UPDATE",
+			flag_update, msg_update := Exec_SQL(sql_update2, configs.DB_tbl_mst_Agen, "UPDATE",
 				name, email, phone, status,
 				admin, tglnow.Format("YYYY-MM-DD HH:mm:ss"), idcompany, username)
 

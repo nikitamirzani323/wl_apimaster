@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -13,7 +14,7 @@ import (
 	"github.com/nleeper/goment"
 )
 
-func Fetch_adminHome() (helpers.ResponseAdmin, error) {
+func Fetch_adminHome(idcompany string) (helpers.ResponseAdmin, error) {
 	var obj entities.Model_admin
 	var arraobj []entities.Model_admin
 	var res helpers.ResponseAdmin
@@ -23,51 +24,51 @@ func Fetch_adminHome() (helpers.ResponseAdmin, error) {
 	start := time.Now()
 
 	sql_select := `SELECT 
-			username , name, idadmin,
-			statuslogin, to_char(COALESCE(lastlogin,now()), 'YYYY-MM-DD HH24:MI:SS') as lastlogin, to_char(COALESCE(joindate,now()), 'YYYY-MM-DD') as joindate, 
-			ipaddress, timezone,   
-			createadmin, to_char(COALESCE(createdateadmin,now()), 'YYYY-MM-DD HH24:MI:SS') as createdateadmin, 
-			updateadmin, to_char(COALESCE(updatedateadmin,now()), 'YYYY-MM-DD HH24:MI:SS') as updatedateadmin 
-			FROM ` + configs.DB_tbl_admin + ` 
-			ORDER BY lastlogin DESC 
+			username_comp , typeadmin, idruleadmin, 
+			nama_comp, email_comp, phone_comp, 
+			status_comp, to_char(COALESCE(lastlogin_comp,now()), 'YYYY-MM-DD HH24:MI:SS') as lastlogin_comp, 
+			lastipaddres_comp,   
+			createcomp_admin, to_char(COALESCE(createdatecomp_admin,now()), 'YYYY-MM-DD HH24:MI:SS') as createdatecomp_admin, 
+			updatecomp_admin, to_char(COALESCE(updatedatecomp_admin,now()), 'YYYY-MM-DD HH24:MI:SS') as updatedatecomp_admin 
+			FROM ` + configs.DB_tbl_mst_Company_admin + ` 
+			WHERE idcompany = $1
+			ORDER BY lastlogin_comp DESC 
 		`
 
-	row, err := con.QueryContext(ctx, sql_select)
+	row, err := con.QueryContext(ctx, sql_select, idcompany)
 
 	helpers.ErrorCheck(err)
 	for row.Next() {
 		var (
-			username_db, name_db, idadminlevel_db                                  string
-			statuslogin_db, lastlogin_db, joindate_db, ipaddress_db, timezone_db   string
-			createadmin_db, createdateadmin_db, updateadmin_db, updatedateadmin_db string
+			username_comp_db, typeadmin_db                                                             string
+			idruleadmin_db                                                                             int
+			nama_comp_db, email_comp_db, phone_comp_db                                                 string
+			status_comp_db, lastlogin_comp_db, lastipaddres_comp_db                                    string
+			createcomp_admin_db, createdatecomp_admin_db, updatecomp_admin_db, updatedatecomp_admin_db string
 		)
 
 		err = row.Scan(
-			&username_db, &name_db, &idadminlevel_db,
-			&statuslogin_db, &lastlogin_db, &joindate_db,
-			&ipaddress_db, &timezone_db,
-			&createadmin_db, &createdateadmin_db, &updateadmin_db, &updatedateadmin_db)
+			&username_comp_db, &typeadmin_db, &idruleadmin_db,
+			&nama_comp_db, &email_comp_db, &phone_comp_db,
+			&status_comp_db, &lastlogin_comp_db, &lastipaddres_comp_db,
+			&createcomp_admin_db, &createdatecomp_admin_db, &updatecomp_admin_db, &updatedatecomp_admin_db)
 
 		helpers.ErrorCheck(err)
-		if statuslogin_db == "Y" {
-			statuslogin_db = "ACTIVE"
-		}
-		if lastlogin_db == "0000-00-00 00:00:00" {
-			lastlogin_db = ""
-		}
-		create := createadmin_db + ", " + createdateadmin_db
+
+		create := createcomp_admin_db + ", " + createdatecomp_admin_db
 		update := ""
-		if updateadmin_db != "" {
-			update = updateadmin_db + ", " + updatedateadmin_db
+		if updatecomp_admin_db != "" {
+			update = updatecomp_admin_db + ", " + updatecomp_admin_db
 		}
-		obj.Admin_username = username_db
-		obj.Admin_nama = name_db
-		obj.Admin_rule = idadminlevel_db
-		obj.Admin_joindate = joindate_db
-		obj.Admin_timezone = timezone_db
-		obj.Admin_lastlogin = lastlogin_db
-		obj.Admin_lastIpaddress = ipaddress_db
-		obj.Admin_status = statuslogin_db
+		obj.Admin_username = username_comp_db
+		obj.Admin_type = typeadmin_db
+		obj.Admin_rule = idruleadmin_db
+		obj.Admin_nama = nama_comp_db
+		obj.Admin_phone = phone_comp_db
+		obj.Admin_email = email_comp_db
+		obj.Admin_lastlogin = lastlogin_comp_db
+		obj.Admin_lastIpaddress = lastipaddres_comp_db
+		obj.Admin_status = status_comp_db
 		obj.Admin_create = create
 		obj.Admin_update = update
 		arraobj = append(arraobj, obj)
@@ -78,22 +79,25 @@ func Fetch_adminHome() (helpers.ResponseAdmin, error) {
 	var objRule entities.Model_adminrule
 	var arraobjRule []entities.Model_adminrule
 	sql_listrule := `SELECT 
-		idadmin 	
-		FROM ` + configs.DB_tbl_admingroup + ` 
+		idcomprule, nmcomprule 	
+		FROM ` + configs.DB_tbl_mst_Company_adminrule + ` 
+		WHERE idcompany=$1 
 	`
-	row_listrule, err_listrule := con.QueryContext(ctx, sql_listrule)
+	row_listrule, err_listrule := con.QueryContext(ctx, sql_listrule, idcompany)
 
 	helpers.ErrorCheck(err_listrule)
 	for row_listrule.Next() {
 		var (
-			idruleadmin_db string
+			idcomprule_db int
+			nmcomprule_db string
 		)
 
-		err = row_listrule.Scan(&idruleadmin_db)
+		err = row_listrule.Scan(&idcomprule_db, &nmcomprule_db)
 
 		helpers.ErrorCheck(err)
 
-		objRule.Admin_idrule = idruleadmin_db
+		objRule.Admin_idrule = idcomprule_db
+		objRule.Admin_nmrule = nmcomprule_db
 		arraobjRule = append(arraobjRule, objRule)
 		msg = "Success"
 	}
@@ -106,37 +110,31 @@ func Fetch_adminHome() (helpers.ResponseAdmin, error) {
 
 	return res, nil
 }
-func Save_adminHome(admin, username, password, nama, rule, status, sData string) (helpers.Response, error) {
+func Save_adminHome(admin, idcompany, username, password, nama, email, phone, status, sData string, idrule int) (helpers.Response, error) {
 	var res helpers.Response
 	msg := "Failed"
 	tglnow, _ := goment.New()
 	render_page := time.Now()
 	flag := false
-	if status == "ACTIVE" {
-		status = "Y"
-	} else {
-		status = "N"
-	}
 	if sData == "New" {
-		flag = CheckDB(configs.DB_tbl_admin, "username", username)
+		flag = CheckDB(configs.DB_tbl_mst_Company_admin, "username_comp", username)
 		if !flag {
 			sql_insert := `
 				insert into
-				` + configs.DB_tbl_admin + ` (
-					username , password, idadmin, name, statuslogin, joindate, 
-					createadmin, createdateadmin
+				` + configs.DB_tbl_mst_Company_admin + ` (
+					username_comp , password_comp, idcompany, typeadmin, idruleadmin, 
+					nama_comp, email_comp, phone_comp, status_comp, 
+					createcomp_admin, createdatecomp_admin
 				) values (
-					$1, $2, $3, $4, $5, $6, 
-					$7, $8
+					$1, $2, $3, $4, $5,  
+					$6, $7
 				)
 			`
 			hashpass := helpers.HashPasswordMD5(password)
-			flag_insert, msg_insert := Exec_SQL(sql_insert, configs.DB_tbl_admin, "INSERT",
-				username, hashpass,
-				rule, nama, status,
-				tglnow.Format("YYYY-MM-DD HH:mm:ss"),
-				admin,
-				tglnow.Format("YYYY-MM-DD HH:mm:ss"))
+			flag_insert, msg_insert := Exec_SQL(sql_insert, configs.DB_tbl_mst_Company_admin, "INSERT",
+				username, hashpass, idcompany, "ADMIN", idrule,
+				nama, email, phone, status,
+				admin, tglnow.Format("YYYY-MM-DD HH:mm:ss"))
 
 			if flag_insert {
 				flag = true
@@ -146,10 +144,13 @@ func Save_adminHome(admin, username, password, nama, rule, status, sData string)
 				notelog := ""
 				notelog += "NEW ADMIN <br>"
 				notelog += "USERNAME : " + username + " <br>"
-				notelog += "RULE : " + rule + " <br>"
+				notelog += "RULE : " + strconv.Itoa(idrule) + " <br>"
+				notelog += "TYPE : ADMIN <br>"
 				notelog += "NAME : " + nama + " <br>"
+				notelog += "PHONE : " + phone + " <br>"
+				notelog += "EMAIL : " + email + " <br>"
 				notelog += "STATUS : " + status
-				Insert_log("MASTER", "", admin, "ADMIN", "INSERT", notelog)
+				Insert_log("MASTER", idcompany, admin, "ADMIN", "INSERT", notelog)
 			} else {
 				log.Println(msg_insert)
 			}
@@ -160,15 +161,16 @@ func Save_adminHome(admin, username, password, nama, rule, status, sData string)
 		if password == "" {
 			sql_update := `
 				UPDATE 
-				` + configs.DB_tbl_admin + `  
-				SET name =$1, idadmin=$2, statuslogin=$3,  
-				updateadmin=$4, updatedateadmin=$5 
-				WHERE username =$6 
+				` + configs.DB_tbl_mst_Company_admin + `  
+				SET idruleadmin=$1 ,nama_comp=$2, email_comp=$3, phone_comp=$4, status_comp=$5, 
+				updatecomp_admin=$6, updatedatecomp_admin=$7  
+				WHERE username_comp=$8  
+				AND idcompany=$9   
 			`
 
-			flag_update, msg_update := Exec_SQL(sql_update, configs.DB_tbl_admin, "UPDATE",
-				nama, rule, status, admin, tglnow.Format("YYYY-MM-DD HH:mm:ss"),
-				username)
+			flag_update, msg_update := Exec_SQL(sql_update, configs.DB_tbl_mst_Company_admin, "UPDATE",
+				idrule, nama, email, phone, status, admin, tglnow.Format("YYYY-MM-DD HH:mm:ss"),
+				username, idcompany)
 
 			if flag_update {
 				flag = true
@@ -178,8 +180,11 @@ func Save_adminHome(admin, username, password, nama, rule, status, sData string)
 				notelog := ""
 				notelog += "UPDATE ADMIN <br>"
 				notelog += "USERNAME : " + username + " <br>"
-				notelog += "RULE : " + rule + " <br>"
+				notelog += "RULE : " + strconv.Itoa(idrule) + " <br>"
+				notelog += "TYPE : ADMIN <br>"
 				notelog += "NAME : " + nama + " <br>"
+				notelog += "PHONE : " + phone + " <br>"
+				notelog += "EMAIL : " + email + " <br>"
 				notelog += "STATUS : " + status
 				Insert_log("MASTER", "", admin, "ADMIN", "UPDATE", notelog)
 			} else {
@@ -189,19 +194,15 @@ func Save_adminHome(admin, username, password, nama, rule, status, sData string)
 			hashpass := helpers.HashPasswordMD5(password)
 			sql_update2 := `
 				UPDATE 
-				` + configs.DB_tbl_admin + `   
-				SET name =$1, password=$2, idadmin=$3, statuslogin=$4,  
-				updateadmin=$5, updatedateadmin=$6 
-				WHERE username =$7 
+				` + configs.DB_tbl_mst_Company_admin + `   
+				SET password_comp=$1, idruleadmin=$2 ,nama_comp=$3, email_comp=$4, phone_comp=$5, status_comp=$6, 
+				updatecomp_admin=$7, updatedatecomp_admin=$8   
+				WHERE username_comp=$9   
+				AND idcompany=$10    
 			`
-			flag_update, msg_update := Exec_SQL(sql_update2, configs.DB_tbl_admin, "UPDATE",
-				nama,
-				hashpass,
-				rule,
-				status,
-				admin,
-				tglnow.Format("YYYY-MM-DD HH:mm:ss"),
-				username)
+			flag_update, msg_update := Exec_SQL(sql_update2, configs.DB_tbl_mst_Company_admin, "UPDATE",
+				hashpass, idrule, nama, email, phone, status, admin, tglnow.Format("YYYY-MM-DD HH:mm:ss"),
+				username, idcompany)
 
 			if flag_update {
 				flag = true
@@ -209,10 +210,13 @@ func Save_adminHome(admin, username, password, nama, rule, status, sData string)
 				log.Println(msg_update)
 
 				notelog := ""
-				notelog += "UPDATE ADMIN <br>"
+				notelog += "UPDATE ADMIN - CHANGE PASSWORD <br>"
 				notelog += "USERNAME : " + username + " <br>"
-				notelog += "RULE : " + rule + " <br>"
+				notelog += "RULE : " + strconv.Itoa(idrule) + " <br>"
+				notelog += "TYPE : ADMIN <br>"
 				notelog += "NAME : " + nama + " <br>"
+				notelog += "PHONE : " + phone + " <br>"
+				notelog += "EMAIL : " + email + " <br>"
 				notelog += "STATUS : " + status
 				Insert_log("MASTER", "", admin, "ADMIN", "UPDATE", notelog)
 			} else {
