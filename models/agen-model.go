@@ -214,7 +214,7 @@ func Fetch_agenListAdmin(idcompany, idagen string) (helpers.Response, error) {
 			FROM ` + configs.DB_tbl_mst_Agen_admin + ` 
 			WHERE idagen = $1 
 			AND idcompany = $2  
-			ORDER BY lastlogin_comp DESC 
+			ORDER BY createadmin_agen DESC 
 		`
 
 	row, err := con.QueryContext(ctx, sql_select, idagen, idcompany)
