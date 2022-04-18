@@ -188,7 +188,7 @@ func Home(c *fiber.Ctx) error {
 }
 
 func _deletelogin_admin(idcompany string) {
-	val_super := helpers.DeleteRedis("LISTCOMPANY_SUPER_WL_LISTADMIN" + strings.ToLower(idcompany))
+	val_super := helpers.DeleteRedis("LISTCOMPANY_SUPER_WL_LISTADMIN_" + strings.ToLower(idcompany))
 	log.Printf("REDIS DELETE SUPER  ADMIN : %d", val_super)
 
 	val_master := helpers.DeleteRedis(Fieldadmin_home_redis + "_" + strings.ToLower(idcompany))
