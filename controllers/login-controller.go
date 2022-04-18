@@ -50,7 +50,7 @@ func CheckLogin(c *fiber.Ctx) error {
 	idcompany := ""
 	typeadmin := ""
 	ruleadmin := 0
-	resultredis, flag := helpers.GetRedis(Field_login_redis + "_" + strings.ToLower(idcompany))
+	resultredis, flag := helpers.GetRedis(Field_login_redis)
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
@@ -85,20 +85,22 @@ func CheckLogin(c *fiber.Ctx) error {
 			idcompany = idcompany_model
 			typeadmin = typeadmin_model
 			ruleadmin = rule_model
-			helpers.SetRedis(Field_login_redis+"_"+strings.ToLower(idcompany), result, 30*time.Hour)
-			log.Println("LIST LOGIN ADMIN SUPER MYSQL")
+			helpers.SetRedis(Field_login_redis, result, 30*time.Hour)
+			log.Println("LIST LOGIN ADMIN MASTER MYSQL")
 
 		}
 
 	} else {
-		log.Println("LIST LOGIN ADMIN SUPER CACHE")
+		log.Println("LIST LOGIN ADMIN MASTER CACHE")
 
 	}
 	temp_token := ""
 	if flag_login {
 		_deletelogin_admin(idcompany)
 		models.Update_login(client.Username, client.Ipaddress, client.Timezone, idcompany)
-
+		log.Println("USERNAME", client.Username)
+		log.Println("TYPE", typeadmin)
+		log.Println("RULE", ruleadmin)
 		dataclient := client.Username + "==" + idcompany + "==" + typeadmin + "==" + strconv.Itoa(ruleadmin)
 		dataclient_encr, keymap := helpers.Encryption(dataclient)
 		dataclient_encr_final := dataclient_encr + "|" + strconv.Itoa(keymap)
@@ -186,8 +188,11 @@ func Home(c *fiber.Ctx) error {
 }
 
 func _deletelogin_admin(idcompany string) {
-	val_super := helpers.DeleteRedis(Fieldadmin_home_redis + "_" + strings.ToLower(idcompany))
-	log.Printf("REDIS DELETE MASTER ADMIN : %d", val_super)
+	val_super := helpers.DeleteRedis("LISTCOMPANY_SUPER_WL_LISTADMIN" + strings.ToLower(idcompany))
+	log.Printf("REDIS DELETE SUPER  ADMIN : %d", val_super)
+
+	val_master := helpers.DeleteRedis(Fieldadmin_home_redis + "_" + strings.ToLower(idcompany))
+	log.Printf("REDIS DELETE MASTER ADMIN : %d", val_master)
 
 	val_superlog := helpers.DeleteRedis(Fieldlog_home_redis + "_" + strings.ToLower(idcompany))
 	log.Printf("REDIS DELETE MASTER LOG : %d", val_superlog)

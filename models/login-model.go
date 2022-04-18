@@ -65,9 +65,6 @@ func Login_Model(username, password string) (helpers.Response, bool, string, str
 
 	if flag_login {
 		hashpass := helpers.HashPasswordMD5(password)
-		log.Println("Pwd : ", password)
-		log.Println("Pwd Hash :", hashpass)
-		log.Println("DB Hash :", temp_password)
 		if hashpass == temp_password {
 			flag = true
 		}

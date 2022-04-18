@@ -172,8 +172,8 @@ func AdminSave(c *fiber.Ctx) error {
 	return c.JSON(result)
 }
 func _deleteredis_admin(idcompany string) {
-	val_super := helpers.DeleteRedis(Fieldadmin_home_redis + "_" + strings.ToLower(idcompany))
-	log.Printf("REDIS DELETE MASTER ADMIN : %d", val_super)
+	val_master := helpers.DeleteRedis(Fieldadmin_home_redis + "_" + strings.ToLower(idcompany))
+	log.Printf("REDIS DELETE MASTER ADMIN : %d", val_master)
 
 	val_superlog := helpers.DeleteRedis(Fieldlog_home_redis + "_" + strings.ToLower(idcompany))
 	log.Printf("REDIS DELETE MASTER LOG : %d", val_superlog)
