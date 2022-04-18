@@ -15,7 +15,7 @@ import (
 	"github.com/nikitamirzani323/wl_apimaster/models"
 )
 
-const Field_login_redis = "LISTLOGINMASTER_MASTER_WL"
+const Field_login_redis = "LISTLOGIN_MASTER_WL"
 
 func CheckLogin(c *fiber.Ctx) error {
 	msg := "Username and Password not register"
